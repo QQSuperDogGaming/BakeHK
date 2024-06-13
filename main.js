@@ -1,20 +1,3 @@
-const config = {
-    type: Phaser.AUTO,
-    width: window.innerWidth,
-    height: window.innerHeight,
-    physics: {
-        default: 'arcade',
-        arcade: {
-            gravity: { y: 300 },
-            debug: false
-        }
-    },
-    scene: [MenuScene, GameScene]  // Include both scenes
-};
-
-const game = new Phaser.Game(config);
-
-// Define the GameScene
 class GameScene extends Phaser.Scene {
     constructor() {
         super({ key: 'GameScene' });
@@ -67,6 +50,10 @@ class GameScene extends Phaser.Scene {
         this.physics.add.collider(player, bombs, hitBomb, null, this);
 
         scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
+        livesText = this.add.text(16, 50, 'Lives: 3', { fontSize: '32px', fill: '#000' });
+
+        score = 0;
+        lives = 3;
 
         starTimer = this.time.addEvent({
             delay: 1000,
@@ -137,8 +124,6 @@ class GameScene extends Phaser.Scene {
     }
 }
 
-// Add other game functions here...
-
 function createPlatform(x, y, scaleX = 1) {
     const platform = platforms.create(x, y, 'ground');
     platform.setScale(scaleX).refreshBody();
@@ -196,12 +181,16 @@ function collectStar(player, star) {
 }
 
 function hitBomb(player, bomb) {
-    this.physics.pause();
+    bomb.disableBody(true, true);
+    lives -= 1;
+    livesText.setText('Lives: ' + lives);
 
-    player.setTint(0xff0000);
-
-    gameOver = true;
-    scoreText.setText('Game Over!');
+    if (lives <= 0) {
+        this.physics.pause();
+        player.setTint(0xff0000);
+        gameOver = true;
+        scoreText.setText('Game Over!');
+    }
 }
 
 function checkInactivity() {
@@ -270,4 +259,13 @@ function createTouchControls(scene) {
     jumpButton.on('pointerout', function () {
         isJumping = false;
     });
+}
+
+function generateQRCode(url) {
+    const qrCodeElement = document.getElementById('qrcode');
+    qrCodeElement.innerHTML = '';
+    const qr = qrcode(4, 'L');
+    qr.addData(url);
+    qr.make();
+    qrCodeElement.innerHTML = qr.createImgTag();
 }
