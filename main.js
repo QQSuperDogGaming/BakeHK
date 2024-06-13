@@ -1,3 +1,27 @@
+let player;
+let stars;
+let bombs;
+let platforms;
+let cursors;
+let wasd;
+let spacebar;
+let score = 0;
+let lives = 3;
+let gameOver = false;
+let scoreText;
+let livesText;
+let starTimer;
+let platformTimer;
+let bombTimer;
+let inactivityTimer;
+let lastMovementTime = 0;
+let leftButton;
+let rightButton;
+let jumpButton;
+let isMovingLeft = false;
+let isMovingRight = false;
+let isJumping = false;
+
 class GameScene extends Phaser.Scene {
     constructor() {
         super({ key: 'GameScene' });
@@ -8,26 +32,26 @@ class GameScene extends Phaser.Scene {
         this.load.image('ground', 'assets/platform.png');
         this.load.image('star', 'assets/star.png');
         this.load.image('bomb', 'assets/bomb.png');
-        this.load.image('leftButton', 'assets/leftButton.png'); // Add your button images
-        this.load.image('rightButton', 'assets/rightButton.png'); // Add your button images
-        this.load.image('jumpButton', 'assets/jumpButton.png'); // Add your button images
-        this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
+        this.load.image('leftButton', 'assets/leftButton.png');
+        this.load.image('rightButton', 'assets/rightButton.png');
+        this.load.image('jumpButton', 'assets/jumpButton.png');
+        this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 64, frameHeight: 64 });
     }
 
     create() {
-        this.add.image(window.innerWidth / 2, window.innerHeight / 2, 'sky').setDisplaySize(window.innerWidth, window.innerHeight);
+        this.add.image(this.scale.width / 2, this.scale.height / 2, 'sky').setDisplaySize(this.scale.width, this.scale.height);
 
         platforms = this.physics.add.group({
             immovable: true,
             allowGravity: false
         });
 
-        createPlatform(window.innerWidth / 2, window.innerHeight - 30, 2);
-        createPlatform(window.innerWidth - 200, window.innerHeight - 200, 1);
-        createPlatform(50, window.innerHeight - 350, 1);
-        createPlatform(window.innerWidth - 100, window.innerHeight - 400, 1);
+        createPlatform(this.scale.width / 2, this.scale.height - 30, 2);
+        createPlatform(this.scale.width - 200, this.scale.height - 200, 1);
+        createPlatform(50, this.scale.height - 350, 1);
+        createPlatform(this.scale.width - 100, this.scale.height - 400, 1);
 
-        player = this.physics.add.sprite(100, window.innerHeight - 150, 'dude');
+        player = this.physics.add.sprite(100, this.scale.height - 150, 'dude');
         player.setBounce(0.2);
         player.setCollideWorldBounds(true);
         this.physics.add.collider(player, platforms);
@@ -64,7 +88,7 @@ class GameScene extends Phaser.Scene {
 
         platformTimer = this.time.addEvent({
             delay: 2000,
-            callback: () => createPlatform(Phaser.Math.Between(0, window.innerWidth), 0, Phaser.Math.FloatBetween(0.5, 1.5)),
+            callback: () => createPlatform(Phaser.Math.Between(0, this.scale.width), 0, Phaser.Math.FloatBetween(0.5, 1.5)),
             callbackScope: this,
             loop: true
         });
@@ -87,7 +111,7 @@ class GameScene extends Phaser.Scene {
         createTouchControls(this);
 
         // Generate and display the QR code
-        generateQRCode('https://<your-username>.github.io/<repository-name>');
+        generateQRCode('https://qqsuperdoggaming.github.io/BakeHK/');
     }
 
     update(time, delta) {
@@ -117,12 +141,55 @@ class GameScene extends Phaser.Scene {
         }
 
         platforms.children.iterate(function (platform) {
-            if (platform && platform.y > window.innerHeight) {
+            if (platform && platform.y > this.scale.height) {
                 platform.destroy();
             }
-        });
+        }, this);
     }
 }
+
+class MenuScene extends Phaser.Scene {
+    constructor() {
+        super({ key: 'MenuScene' });
+    }
+
+    preload() {
+        this.load.image('menu', 'assets/menu.png');
+        this.load.image('startButton', 'assets/startButton.png');
+    }
+
+    create() {
+        this.add.image(this.scale.width / 2, this.scale.height / 2, 'menu').setDisplaySize(this.scale.width, this.scale.height);
+
+        const startButton = this.add.image(this.scale.width / 2, this.scale.height / 2, 'startButton').setInteractive().setDisplaySize(150, 50);
+
+        startButton.on('pointerdown', () => {
+            this.scene.start('GameScene');
+        });
+
+        this.add.text(this.scale.width / 2, this.scale.height / 2 - 100, 'My Phaser Game', { fontSize: '64px', fill: '#fff' }).setOrigin(0.5);
+    }
+}
+
+const config = {
+    type: Phaser.AUTO,
+    width: window.innerWidth,
+    height: window.innerHeight,
+    scale: {
+        mode: Phaser.Scale.RESIZE,
+        autoCenter: Phaser.Scale.CENTER_BOTH
+    },
+    physics: {
+        default: 'arcade',
+        arcade: {
+            gravity: { y: 300 },
+            debug: false
+        }
+    },
+    scene: [MenuScene, GameScene]
+};
+
+const game = new Phaser.Game(config);
 
 function createPlatform(x, y, scaleX = 1) {
     const platform = platforms.create(x, y, 'ground');
@@ -132,7 +199,7 @@ function createPlatform(x, y, scaleX = 1) {
 }
 
 function createStar() {
-    const x = Phaser.Math.Between(0, window.innerWidth);
+    const x = Phaser.Math.Between(0, game.scale.width);
     const y = 0;
     const star = stars.create(x, y, 'star');
     star.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
@@ -147,7 +214,7 @@ function createStar() {
 }
 
 function createBomb() {
-    const x = Phaser.Math.Between(0, window.innerWidth);
+    const x = Phaser.Math.Between(0, game.scale.width);
     const bomb = bombs.create(x, 16, 'bomb');
     bomb.setBounce(1);
     bomb.setCollideWorldBounds(true);
@@ -226,9 +293,9 @@ function createTouchControls(scene) {
     const buttonSize = 80;
     const buttonMargin = 20;
 
-    leftButton = scene.add.image(buttonMargin + buttonSize / 2, window.innerHeight - buttonMargin - buttonSize / 2, 'leftButton').setInteractive().setDisplaySize(buttonSize, buttonSize);
-    rightButton = scene.add.image(buttonMargin * 2 + buttonSize + buttonSize / 2, window.innerHeight - buttonMargin - buttonSize / 2, 'rightButton').setInteractive().setDisplaySize(buttonSize, buttonSize);
-    jumpButton = scene.add.image(window.innerWidth - buttonMargin - buttonSize / 2, window.innerHeight - buttonMargin - buttonSize / 2, 'jumpButton').setInteractive().setDisplaySize(buttonSize, buttonSize);
+    leftButton = scene.add.image(buttonMargin + buttonSize / 2, game.scale.height - buttonMargin - buttonSize / 2, 'leftButton').setInteractive().setDisplaySize(buttonSize, buttonSize);
+    rightButton = scene.add.image(buttonMargin * 2 + buttonSize + buttonSize / 2, game.scale.height - buttonMargin - buttonSize / 2, 'rightButton').setInteractive().setDisplaySize(buttonSize, buttonSize);
+    jumpButton = scene.add.image(game.scale.width - buttonMargin - buttonSize / 2, game.scale.height - buttonMargin - buttonSize / 2, 'jumpButton').setInteractive().setDisplaySize(buttonSize, buttonSize);
 
     leftButton.on('pointerdown', function () {
         isMovingLeft = true;
