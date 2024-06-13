@@ -9,152 +9,135 @@ const config = {
             debug: false
         }
     },
-    scene: {
-        preload: preload,
-        create: create,
-        update: update
-    }
+    scene: [MenuScene, GameScene]  // Include both scenes
 };
 
 const game = new Phaser.Game(config);
 
-let player;
-let stars;
-let bombs;
-let platforms;
-let cursors;
-let wasd;
-let spacebar;
-let score = 0;
-let gameOver = false;
-let scoreText;
-let starTimer;
-let platformTimer;
-let bombTimer;
-let inactivityTimer;
-let lastMovementTime = 0;
-let leftButton;
-let rightButton;
-let jumpButton;
-let isMovingLeft = false;
-let isMovingRight = false;
-let isJumping = false;
-
-function preload() {
-    this.load.image('sky', 'assets/sky.png');
-    this.load.image('ground', 'assets/platform.png');
-    this.load.image('star', 'assets/star.png');
-    this.load.image('bomb', 'assets/bomb.png');
-    this.load.image('leftButton', 'assets/leftButton.png'); // Add your button images
-    this.load.image('rightButton', 'assets/rightButton.png'); // Add your button images
-    this.load.image('jumpButton', 'assets/jumpButton.png'); // Add your button images
-    this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 64, frameHeight: 64 });
-}
-
-function create() {
-    this.add.image(window.innerWidth / 2, window.innerHeight / 2, 'sky').setDisplaySize(window.innerWidth, window.innerHeight);
-
-    platforms = this.physics.add.group({
-        immovable: true,
-        allowGravity: false
-    });
-
-    createPlatform(window.innerWidth / 2, window.innerHeight - 30, 2);
-    createPlatform(window.innerWidth - 200, window.innerHeight - 200, 1);
-    createPlatform(50, window.innerHeight - 350, 1);
-    createPlatform(window.innerWidth - 100, window.innerHeight - 400, 1);
-
-    player = this.physics.add.sprite(100, window.innerHeight - 150, 'dude');
-    player.setBounce(0.2);
-    player.setCollideWorldBounds(true);
-    this.physics.add.collider(player, platforms);
-
-    cursors = this.input.keyboard.createCursorKeys();
-    wasd = this.input.keyboard.addKeys({
-        up: Phaser.Input.Keyboard.KeyCodes.W,
-        left: Phaser.Input.Keyboard.KeyCodes.A,
-        down: Phaser.Input.Keyboard.KeyCodes.S,
-        right: Phaser.Input.Keyboard.KeyCodes.D
-    });
-    spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-
-    stars = this.physics.add.group();
-    this.physics.add.collider(stars, platforms);
-    this.physics.add.overlap(player, stars, collectStar, null, this);
-
-    bombs = this.physics.add.group();
-    this.physics.add.collider(bombs, platforms);
-    this.physics.add.collider(player, bombs, hitBomb, null, this);
-
-    scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
-
-    starTimer = this.time.addEvent({
-        delay: 1000,
-        callback: createStar,
-        callbackScope: this,
-        loop: true
-    });
-
-    platformTimer = this.time.addEvent({
-        delay: 2000,
-        callback: () => createPlatform(Phaser.Math.Between(0, window.innerWidth), 0, Phaser.Math.FloatBetween(0.5, 1.5)),
-        callbackScope: this,
-        loop: true
-    });
-
-    bombTimer = this.time.addEvent({
-        delay: 5000,
-        callback: createBomb,
-        callbackScope: this,
-        loop: true
-    });
-
-    inactivityTimer = this.time.addEvent({
-        delay: 30000,
-        callback: checkInactivity,
-        callbackScope: this,
-        loop: true
-    });
-
-    // Create touch controls
-    createTouchControls(this);
-
-    // Generate and display the QR code
-    generateQRCode('https://<your-username>.github.io/<repository-name>');
-}
-
-function update(time, delta) {
-    if (gameOver) {
-        return;
+// Define the GameScene
+class GameScene extends Phaser.Scene {
+    constructor() {
+        super({ key: 'GameScene' });
     }
 
-    let isMoving = false;
-
-    if (cursors.left.isDown || wasd.left.isDown || isMovingLeft) {
-        player.setVelocityX(-160);
-        isMoving = true;
-    } else if (cursors.right.isDown || wasd.right.isDown || isMovingRight) {
-        player.setVelocityX(160);
-        isMoving = true;
-    } else {
-        player.setVelocityX(0);
+    preload() {
+        this.load.image('sky', 'assets/sky.png');
+        this.load.image('ground', 'assets/platform.png');
+        this.load.image('star', 'assets/star.png');
+        this.load.image('bomb', 'assets/bomb.png');
+        this.load.image('leftButton', 'assets/leftButton.png'); // Add your button images
+        this.load.image('rightButton', 'assets/rightButton.png'); // Add your button images
+        this.load.image('jumpButton', 'assets/jumpButton.png'); // Add your button images
+        this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
     }
 
-    if (cursors.up.isDown || wasd.up.isDown || spacebar.isDown || isJumping) {
-        player.setVelocityY(-330);
-        isMoving = true;
+    create() {
+        this.add.image(window.innerWidth / 2, window.innerHeight / 2, 'sky').setDisplaySize(window.innerWidth, window.innerHeight);
+
+        platforms = this.physics.add.group({
+            immovable: true,
+            allowGravity: false
+        });
+
+        createPlatform(window.innerWidth / 2, window.innerHeight - 30, 2);
+        createPlatform(window.innerWidth - 200, window.innerHeight - 200, 1);
+        createPlatform(50, window.innerHeight - 350, 1);
+        createPlatform(window.innerWidth - 100, window.innerHeight - 400, 1);
+
+        player = this.physics.add.sprite(100, window.innerHeight - 150, 'dude');
+        player.setBounce(0.2);
+        player.setCollideWorldBounds(true);
+        this.physics.add.collider(player, platforms);
+
+        cursors = this.input.keyboard.createCursorKeys();
+        wasd = this.input.keyboard.addKeys({
+            up: Phaser.Input.Keyboard.KeyCodes.W,
+            left: Phaser.Input.Keyboard.KeyCodes.A,
+            down: Phaser.Input.Keyboard.KeyCodes.S,
+            right: Phaser.Input.Keyboard.KeyCodes.D
+        });
+        spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+
+        stars = this.physics.add.group();
+        this.physics.add.collider(stars, platforms);
+        this.physics.add.overlap(player, stars, collectStar, null, this);
+
+        bombs = this.physics.add.group();
+        this.physics.add.collider(bombs, platforms);
+        this.physics.add.collider(player, bombs, hitBomb, null, this);
+
+        scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
+
+        starTimer = this.time.addEvent({
+            delay: 1000,
+            callback: createStar,
+            callbackScope: this,
+            loop: true
+        });
+
+        platformTimer = this.time.addEvent({
+            delay: 2000,
+            callback: () => createPlatform(Phaser.Math.Between(0, window.innerWidth), 0, Phaser.Math.FloatBetween(0.5, 1.5)),
+            callbackScope: this,
+            loop: true
+        });
+
+        bombTimer = this.time.addEvent({
+            delay: 5000,
+            callback: createBomb,
+            callbackScope: this,
+            loop: true
+        });
+
+        inactivityTimer = this.time.addEvent({
+            delay: 30000,
+            callback: checkInactivity,
+            callbackScope: this,
+            loop: true
+        });
+
+        // Create touch controls
+        createTouchControls(this);
+
+        // Generate and display the QR code
+        generateQRCode('https://<your-username>.github.io/<repository-name>');
     }
 
-    if (isMoving) {
-        lastMovementTime = time;
-    }
-
-    platforms.children.iterate(function (platform) {
-        if (platform && platform.y > window.innerHeight) {
-            platform.destroy();
+    update(time, delta) {
+        if (gameOver) {
+            return;
         }
-    });
+
+        let isMoving = false;
+
+        if (cursors.left.isDown || wasd.left.isDown || isMovingLeft) {
+            player.setVelocityX(-160);
+            isMoving = true;
+        } else if (cursors.right.isDown || wasd.right.isDown || isMovingRight) {
+            player.setVelocityX(160);
+            isMoving = true;
+        } else {
+            player.setVelocityX(0);
+        }
+
+        if (cursors.up.isDown || wasd.up.isDown || spacebar.isDown || isJumping) {
+            player.setVelocityY(-330);
+            isMoving = true;
+        }
+
+        if (isMoving) {
+            lastMovementTime = time;
+        }
+
+        platforms.children.iterate(function (platform) {
+            if (platform && platform.y > window.innerHeight) {
+                platform.destroy();
+            }
+        });
+    }
 }
+
+// Add other game functions here...
 
 function createPlatform(x, y, scaleX = 1) {
     const platform = platforms.create(x, y, 'ground');
@@ -287,13 +270,4 @@ function createTouchControls(scene) {
     jumpButton.on('pointerout', function () {
         isJumping = false;
     });
-}
-
-function generateQRCode(url) {
-    const qrCodeElement = document.getElementById('qrcode');
-    qrCodeElement.innerHTML = '';
-    const qr = qrcode(4, 'L');
-    qr.addData(url);
-    qr.make();
-    qrCodeElement.innerHTML = qr.createImgTag();
 }
