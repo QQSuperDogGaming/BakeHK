@@ -48,7 +48,7 @@ function preload() {
     this.load.image('leftButton', 'assets/leftButton.png'); // Add your button images
     this.load.image('rightButton', 'assets/rightButton.png'); // Add your button images
     this.load.image('jumpButton', 'assets/jumpButton.png'); // Add your button images
-    this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
+    this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 64, frameHeight: 64 });
 }
 
 function create() {
