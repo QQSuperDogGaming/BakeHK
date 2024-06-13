@@ -21,6 +21,7 @@ let jumpButton;
 let isMovingLeft = false;
 let isMovingRight = false;
 let isJumping = false;
+let fullscreenButton;
 
 class GameScene extends Phaser.Scene {
     constructor() {
@@ -35,6 +36,7 @@ class GameScene extends Phaser.Scene {
         this.load.image('leftButton', 'assets/leftButton.png');
         this.load.image('rightButton', 'assets/rightButton.png');
         this.load.image('jumpButton', 'assets/jumpButton.png');
+        this.load.image('fullscreen', 'assets/fullscreen.png');
         this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 64, frameHeight: 64 });
     }
 
@@ -112,6 +114,16 @@ class GameScene extends Phaser.Scene {
 
         // Generate and display the QR code
         generateQRCode('https://qqsuperdoggaming.github.io/BakeHK/');
+
+        // Add the fullscreen button
+        fullscreenButton = this.add.image(this.scale.width - 40, 40, 'fullscreen').setInteractive().setDisplaySize(32, 32);
+        fullscreenButton.on('pointerdown', () => {
+            if (this.scale.isFullscreen) {
+                this.scale.stopFullscreen();
+            } else {
+                this.scale.startFullscreen();
+            }
+        });
     }
 
     update(time, delta) {
@@ -167,7 +179,7 @@ class MenuScene extends Phaser.Scene {
             this.scene.start('GameScene');
         });
 
-        this.add.text(this.scale.width / 2, this.scale.height / 2 - 100, 'My Phaser Game', { fontSize: '64px', fill: '#fff' }).setOrigin(0.5);
+        this.add.text(this.scale.width / 2, this.scale.height / 2 - 100, 'BakeHK', { fontSize: '64px', fill: '#fff' }).setOrigin(0.5);
     }
 }
 
@@ -290,7 +302,7 @@ function explodeBomb(bomb) {
 }
 
 function createTouchControls(scene) {
-    const buttonSize = 80;
+    const buttonSize = 120;  // Increased button size
     const buttonMargin = 20;
 
     leftButton = scene.add.image(buttonMargin + buttonSize / 2, game.scale.height - buttonMargin - buttonSize / 2, 'leftButton').setInteractive().setDisplaySize(buttonSize, buttonSize);
