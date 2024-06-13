@@ -336,5 +336,3 @@ function generateQRCode(url) {
     qr.make();
     qrCodeElement.innerHTML = qr.createImgTag();
 }
-    qrCodeElement.innerHTML = qr.createImgTag();
-}
