@@ -4,13 +4,16 @@ class MenuScene extends Phaser.Scene {
     }
 
     preload() {
+        this.load.image('menuBackground', 'assets/menuBackground.png');
         this.load.image('startButton', 'assets/startButton.png');
         this.load.image('leaderboardButton', 'assets/leaderboardButton.png');
         this.load.image('fullscreen', 'assets/fullscreen.png');
-        this.load.audio('menuMusic', 'assets/audio/menuMusic.mp3');
     }
 
     create() {
+        // Add background image
+        this.add.image(this.scale.width / 2, this.scale.height / 2, 'menuBackground').setDisplaySize(this.scale.width, this.scale.height);
+
         this.add.text(this.scale.width / 2, this.scale.height / 2 - 200, 'Game Menu', { fontSize: '48px', fill: '#fff' }).setOrigin(0.5);
 
         const startButton = this.add.image(this.scale.width / 2, this.scale.height / 2, 'startButton').setInteractive().setDisplaySize(200, 80);
@@ -32,9 +35,6 @@ class MenuScene extends Phaser.Scene {
                 this.scale.startFullscreen();
             }
         });
-
-        // Play menu music
-        this.sound.add('menuMusic', { loop: true }).play();
     }
 }
 
