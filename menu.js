@@ -4,25 +4,25 @@ class MenuScene extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('menu', 'assets/menu.png');
         this.load.image('startButton', 'assets/startButton.png');
-        this.load.image('character1', 'assets/character1.png');
-        this.load.image('character2', 'assets/character2.png');
-        this.load.image('map1', 'assets/map1.png');
-        this.load.image('map2', 'assets/map2.png');
+        this.load.image('leaderboardButton', 'assets/leaderboardButton.png');
         this.load.image('fullscreen', 'assets/fullscreen.png');
+        this.load.audio('menuMusic', 'assets/audio/menuMusic.mp3');
     }
 
     create() {
-        this.add.image(this.scale.width / 2, this.scale.height / 2, 'menu').setDisplaySize(this.scale.width, this.scale.height);
+        this.add.text(this.scale.width / 2, this.scale.height / 2 - 200, 'Game Menu', { fontSize: '48px', fill: '#fff' }).setOrigin(0.5);
 
-        const character1Button = this.add.image(this.scale.width / 2 - 100, this.scale.height / 2, 'character1').setInteractive().setDisplaySize(80, 80);
-        const character2Button = this.add.image(this.scale.width / 2 + 100, this.scale.height / 2, 'character2').setInteractive().setDisplaySize(80, 80);
-        
-        const map1Button = this.add.image(this.scale.width / 2 - 100, this.scale.height / 2 + 100, 'map1').setInteractive().setDisplaySize(80, 80);
-        const map2Button = this.add.image(this.scale.width / 2 + 100, this.scale.height / 2 + 100, 'map2').setInteractive().setDisplaySize(80, 80);
+        const startButton = this.add.image(this.scale.width / 2, this.scale.height / 2, 'startButton').setInteractive().setDisplaySize(200, 80);
+        const leaderboardButton = this.add.image(this.scale.width / 2, this.scale.height / 2 + 100, 'leaderboardButton').setInteractive().setDisplaySize(200, 80);
 
-        const startButton = this.add.image(this.scale.width / 2, this.scale.height / 2 + 200, 'startButton').setInteractive().setDisplaySize(150, 50);
+        startButton.on('pointerdown', () => {
+            this.scene.start('GameScene');
+        });
+
+        leaderboardButton.on('pointerdown', () => {
+            this.scene.start('LeaderboardScene');
+        });
 
         const fullscreenButton = this.add.image(this.scale.width - 40, 40, 'fullscreen').setInteractive().setDisplaySize(32, 32);
         fullscreenButton.on('pointerdown', () => {
@@ -33,24 +33,46 @@ class MenuScene extends Phaser.Scene {
             }
         });
 
-        let selectedCharacter = null;
-        let selectedMap = null;
-
-        character1Button.on('pointerdown', () => { selectedCharacter = 'character1'; });
-        character2Button.on('pointerdown', () => { selectedCharacter = 'character2'; });
-        
-        map1Button.on('pointerdown', () => { selectedMap = 'map1'; });
-        map2Button.on('pointerdown', () => { selectedMap = 'map2'; });
-
-        startButton.on('pointerdown', () => {
-            if (selectedCharacter && selectedMap) {
-                this.scene.start('GameScene', { character: selectedCharacter, map: selectedMap });
-            } else {
-                alert('Please select a character and a map!');
-            }
-        });
-
-        this.add.text(this.scale.width / 2, this.scale.height / 2 - 100, 'Select Character and Map', { fontSize: '32px', fill: '#fff' }).setOrigin(0.5);
+        // Play menu music
+        this.sound.add('menuMusic', { loop: true }).play();
     }
 }
 
+class LeaderboardScene extends Phaser.Scene {
+    constructor() {
+        super({ key: 'LeaderboardScene' });
+    }
+
+    create() {
+        this.add.text(this.scale.width / 2, 50, 'Leaderboard', { fontSize: '40px', fill: '#fff' }).setOrigin(0.5);
+
+        let scores = JSON.parse(localStorage.getItem('scores')) || [];
+        scores = scores.sort((a, b) => b.score - a.score).slice(0, 10);
+
+        for (let i = 0; i < scores.length; i++) {
+            let scoreEntry = scores[i];
+            this.add.text(this.scale.width / 2, 100 + i * 40, `${i + 1}. ${scoreEntry.name}: ${scoreEntry.score}`, { fontSize: '32px', fill: '#fff' }).setOrigin(0.5);
+        }
+
+        const backButton = this.add.text(this.scale.width / 2, this.scale.height - 50, 'Back', { fontSize: '32px', fill: '#fff' }).setOrigin(0.5).setInteractive();
+        backButton.on('pointerdown', () => {
+            this.scene.start('MenuScene');
+        });
+    }
+}
+
+const config = {
+    type: Phaser.AUTO,
+    width: window.innerWidth,
+    height: window.innerHeight,
+    scene: [MenuScene, GameScene, LeaderboardScene],
+    physics: {
+        default: 'arcade',
+        arcade: {
+            gravity: { y: 300 },
+            debug: false
+        }
+    }
+};
+
+const game = new Phaser.Game(config);
