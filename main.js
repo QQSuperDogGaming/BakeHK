@@ -1,78 +1,116 @@
-class MenuScene extends Phaser.Scene {
+let player;
+let cursors, wasd, leftButton, rightButton, jumpButton;
+let stars, bombs, platforms;
+let scoreText, livesText;
+let gameOver = false;
+let score = 0;
+let lives = 3;
+
+class GameScene extends Phaser.Scene {
     constructor() {
-        super({ key: 'MenuScene' });
+        super({ key: 'GameScene' });
     }
 
     preload() {
-        this.load.image('menuBackground', 'assets/menuBackground.png');
-        this.load.image('startButton', 'assets/startButton.png');
-        this.load.image('leaderboardButton', 'assets/leaderboardButton.png');
-        this.load.image('fullscreen', 'assets/fullscreen.png');
+        this.load.image('sky', 'assets/sky.png');
+        this.load.image('ground', 'assets/platform.png');
+        this.load.image('star', 'assets/star.png');
+        this.load.image('bomb', 'assets/bomb.png');
+        this.load.image('leftButton', 'assets/leftButton.png');
+        this.load.image('rightButton', 'assets/rightButton.png');
+        this.load.image('jumpButton', 'assets/jumpButton.png');
     }
 
     create() {
-        // Add background image
-        this.add.image(this.scale.width / 2, this.scale.height / 2, 'menuBackground').setDisplaySize(this.scale.width, this.scale.height);
+        this.add.image(this.scale.width / 2, this.scale.height / 2, 'sky').setDisplaySize(this.scale.width, this.scale.height);
 
-        this.add.text(this.scale.width / 2, this.scale.height / 2 - 200, 'Game Menu', { fontSize: '48px', fill: '#fff' }).setOrigin(0.5);
+        platforms = this.physics.add.staticGroup();
+        platforms.create(this.scale.width / 2, this.scale.height - 30, 'ground').setScale(2).refreshBody();
 
-        const startButton = this.add.image(this.scale.width / 2, this.scale.height / 2, 'startButton').setInteractive().setDisplaySize(200, 80);
-        const leaderboardButton = this.add.image(this.scale.width / 2, this.scale.height / 2 + 100, 'leaderboardButton').setInteractive().setDisplaySize(200, 80);
+        player = this.physics.add.sprite(100, this.scale.height - 150, 'star');
+        player.setBounce(0.2).setCollideWorldBounds(true);
 
-        startButton.on('pointerdown', () => {
-            this.scene.start('GameScene');
-        });
+        this.physics.add.collider(player, platforms);
 
-        leaderboardButton.on('pointerdown', () => {
-            this.scene.start('LeaderboardScene');
-        });
+        cursors = this.input.keyboard.createCursorKeys();
 
-        const fullscreenButton = this.add.image(this.scale.width - 40, 40, 'fullscreen').setInteractive().setDisplaySize(32, 32);
-        fullscreenButton.on('pointerdown', () => {
-            if (this.scale.isFullscreen) {
-                this.scale.stopFullscreen();
-            } else {
-                this.scale.startFullscreen();
-            }
-        });
+        // Create mobile controls
+        this.createMobileControls();
+
+        scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
+        livesText = this.add.text(16, 80, 'Lives: 3', { fontSize: '32px', fill: '#000' });
+    }
+
+    update() {
+        if (gameOver) return;
+
+        player.setVelocityX(0);
+        if (cursors.left.isDown || (leftButton && leftButton.isDown)) {
+            player.setVelocityX(-160);
+        } else if (cursors.right.isDown || (rightButton && rightButton.isDown)) {
+            player.setVelocityX(160);
+        } else {
+            player.setVelocityX(0);
+        }
+
+        if ((cursors.up.isDown || (jumpButton && jumpButton.isDown)) && player.body.touching.down) {
+            player.setVelocityY(-330);
+        }
+    }
+
+    createMobileControls() {
+        leftButton = this.add.image(80, this.scale.height - 80, 'leftButton').setInteractive().setDisplaySize(60, 60);
+        rightButton = this.add.image(160, this.scale.height - 80, 'rightButton').setInteractive().setDisplaySize(60, 60);
+        jumpButton = this.add.image(this.scale.width - 80, this.scale.height - 80, 'jumpButton').setInteractive().setDisplaySize(60, 60);
+
+        leftButton.setScrollFactor(0);
+        rightButton.setScrollFactor(0);
+        jumpButton.setScrollFactor(0);
+
+        leftButton.on('pointerdown', () => leftButton.isDown = true);
+        leftButton.on('pointerup', () => leftButton.isDown = false);
+        leftButton.on('pointerout', () => leftButton.isDown = false);
+
+        rightButton.on('pointerdown', () => rightButton.isDown = true);
+        rightButton.on('pointerup', () => rightButton.isDown = false);
+        rightButton.on('pointerout', () => rightButton.isDown = false);
+
+        jumpButton.on('pointerdown', () => jumpButton.isDown = true);
+        jumpButton.on('pointerup', () => jumpButton.isDown = false);
+        jumpButton.on('pointerout', () => jumpButton.isDown = false);
     }
 }
 
-class LeaderboardScene extends Phaser.Scene {
-    constructor() {
-        super({ key: 'LeaderboardScene' });
-    }
+function collectStar(player, star) {
+    star.disableBody(true, true);
+    score += 10;
+    scoreText.setText(`Score: ${score}`);
+}
 
-    create() {
-        this.add.text(this.scale.width / 2, 50, 'Leaderboard', { fontSize: '40px', fill: '#fff' }).setOrigin(0.5);
-
-        let scores = JSON.parse(localStorage.getItem('scores')) || [];
-        scores = scores.sort((a, b) => b.score - a.score).slice(0, 10);
-
-        for (let i = 0; i < scores.length; i++) {
-            let scoreEntry = scores[i];
-            this.add.text(this.scale.width / 2, 100 + i * 40, `${i + 1}. ${scoreEntry.name}: ${scoreEntry.score}`, { fontSize: '32px', fill: '#fff' }).setOrigin(0.5);
-        }
-
-        const backButton = this.add.text(this.scale.width / 2, this.scale.height - 50, 'Back', { fontSize: '32px', fill: '#fff' }).setOrigin(0.5).setInteractive();
-        backButton.on('pointerdown', () => {
+function hitBomb(player, bomb) {
+    bomb.disableBody(true, true);
+    player.setTint(0xff0000);
+    lives -= 1;
+    livesText.setText(`Lives: ${lives}`);
+    if (lives <= 0) {
+        gameOver = true;
+        this.saveHighScore();
+        this.time.delayedCall(2000, () => {
             this.scene.start('MenuScene');
         });
+    } else {
+        this.time.delayedCall(1000, () => {
+            bomb.enableBody(true, bomb.x, bomb.y, true, true);
+            player.clearTint();
+        });
     }
 }
 
-const config = {
-    type: Phaser.AUTO,
-    width: window.innerWidth,
-    height: window.innerHeight,
-    scene: [MenuScene, GameScene, LeaderboardScene],
-    physics: {
-        default: 'arcade',
-        arcade: {
-            gravity: { y: 300 },
-            debug: false
-        }
+GameScene.prototype.saveHighScore = function() {
+    let name = prompt('Game Over! Enter your name:');
+    if (name) {
+        let scores = JSON.parse(localStorage.getItem('scores')) || [];
+        scores.push({ name: name, score: score });
+        localStorage.setItem('scores', JSON.stringify(scores));
     }
-};
-
-const game = new Phaser.Game(config);
+}
