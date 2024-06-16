@@ -4,7 +4,7 @@ class MenuScene extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('menuBackground', 'assets/menuBackground.png');
+        this.load.image('menu', 'assets/menu.png');
         this.load.image('startButton', 'assets/startButton.png');
         this.load.image('leaderboardButton', 'assets/leaderboardButton.png');
         this.load.image('fullscreen', 'assets/fullscreen.png');
@@ -12,7 +12,7 @@ class MenuScene extends Phaser.Scene {
 
     create() {
         // Add background image
-        this.add.image(this.scale.width / 2, this.scale.height / 2, 'menuBackground').setDisplaySize(this.scale.width, this.scale.height);
+        this.add.image(this.scale.width / 2, this.scale.height / 2, 'menu').setDisplaySize(this.scale.width, this.scale.height);
 
         this.add.text(this.scale.width / 2, this.scale.height / 2 - 200, 'Game Menu', { fontSize: '48px', fill: '#fff' }).setOrigin(0.5);
 
