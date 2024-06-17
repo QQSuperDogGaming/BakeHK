@@ -32,10 +32,7 @@ class GameScene extends Phaser.Scene {
         // Use the selected map
         this.add.image(this.scale.width / 2, this.scale.height / 2, data.map).setDisplaySize(this.scale.width, this.scale.height);
 
-        platforms = this.physics.add.group({
-            immovable: true,
-            allowGravity: false
-        });
+        platforms = this.physics.add.staticGroup();
 
         this.createPlatform(this.scale.width / 2, this.scale.height - 30, 2);
         this.createPlatform(this.scale.width - 200, this.scale.height - 200, 1);
@@ -49,11 +46,11 @@ class GameScene extends Phaser.Scene {
         this.physics.add.collider(player, platforms);
 
         cursors = this.input.keyboard.createCursorKeys();
-        wasd = this.input.keyboard.addKeys({ 
-            up: Phaser.Input.Keyboard.KeyCodes.W, 
-            left: Phaser.Input.Keyboard.KeyCodes.A, 
-            down: Phaser.Input.Keyboard.KeyCodes.S, 
-            right: Phaser.Input.Keyboard.KeyCodes.D 
+        wasd = this.input.keyboard.addKeys({
+            up: Phaser.Input.Keyboard.KeyCodes.W,
+            left: Phaser.Input.Keyboard.KeyCodes.A,
+            down: Phaser.Input.Keyboard.KeyCodes.S,
+            right: Phaser.Input.Keyboard.KeyCodes.D
         });
 
         stars = this.physics.add.group();
@@ -98,20 +95,11 @@ class GameScene extends Phaser.Scene {
         if (gameOver) return;
 
         this.handlePlayerMovement(player, cursors, wasd, leftButton, rightButton, jumpButton);
-
-        platforms.children.iterate(function (platform) {
-            if (platform && platform.y >= this.scale.height - 30) {
-                platform.setVelocityY(-50);
-            } else if (platform && platform.y <= 100) {
-                platform.setVelocityY(50);
-            }
-        }, this);
     }
 
     createPlatform(x, y, scaleX = 1) {
         const platform = platforms.create(x, y, 'ground');
         platform.setScale(scaleX).refreshBody();
-        platform.setVelocityY(50);  // Add vertical movement
     }
 
     createRandomPlatform() {
