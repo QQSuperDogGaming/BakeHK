@@ -162,7 +162,7 @@ class GameScene extends Phaser.Scene {
         } else if (cursors.right.isDown || wasd.right.isDown || rightButton.isDown) {
             player.setVelocityX(160);
         }
-        if ((cursors.up.isDown || wasd.up.isDown || jumpButton.isDown) && player.body.touching.down) {
+        if (cursors.up.isDown || wasd.up.isDown || jumpButton.isDown) {
             player.setVelocityY(-330);
         }
     }
