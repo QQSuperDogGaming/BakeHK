@@ -5,7 +5,6 @@ let scoreText, livesText;
 let gameOver = false;
 let score = 0;
 let lives = 3;
-let backgroundMusic;
 
 class GameScene extends Phaser.Scene {
     constructor() {
@@ -13,8 +12,7 @@ class GameScene extends Phaser.Scene {
     }
 
     preload() {
-        console.log('Preloading assets...');
-        // Preload map images and audio files
+        // Preload map images
         this.load.image('map1', 'assets/map1.png');
         this.load.image('map2', 'assets/map2.png');
         this.load.image('ground', 'assets/platform.png');
@@ -25,32 +23,12 @@ class GameScene extends Phaser.Scene {
         this.load.image('jumpButton', 'assets/jumpButton.png');
         this.load.image('fullscreen', 'assets/fullscreen.png');
         this.load.image('reload', 'assets/reload.png');
-        this.load.image('character1', 'assets/character1.png');
-        this.load.image('character2', 'assets/character2.png');
-        this.load.image('character3', 'assets/character3.png');
-
-        this.load.audio('backgroundMusic1', 'assets/audio/backgroundMusic1.mp3');
-        this.load.audio('backgroundMusic2', 'assets/audio/backgroundMusic2.mp3');
-        this.load.audio('backgroundMusic3', 'assets/audio/backgroundMusic3.mp3');
-        this.load.audio('jumpSound', 'assets/audio/jump.mp3');
-        this.load.audio('collectStarSound', 'assets/audio/collectStar.mp3');
-        this.load.audio('hitBombSound', 'assets/audio/hitBomb.mp3');
+        this.load.spritesheet('character1', 'assets/character1.png', { frameWidth: 32, frameHeight: 48 });
+        this.load.spritesheet('character2', 'assets/character2.png', { frameWidth: 32, frameHeight: 48 });
+        this.load.spritesheet('character3', 'assets/character3.png', { frameWidth: 32, frameHeight: 48 });
     }
 
     create(data) {
-        console.log('Creating game scene...');
-        // Initialize variables
-        gameOver = false;
-        score = 0;
-        lives = 3;
-
-        // Play random background music
-        const backgroundMusicKeys = ['backgroundMusic1', 'backgroundMusic2', 'backgroundMusic3'];
-        const randomMusicKey = Phaser.Math.RND.pick(backgroundMusicKeys);
-        console.log(`Playing background music: ${randomMusicKey}`);
-        backgroundMusic = this.sound.add(randomMusicKey, { loop: true });
-        backgroundMusic.play();
-
         // Use the selected map
         this.add.image(this.scale.width / 2, this.scale.height / 2, data.map).setDisplaySize(this.scale.width, this.scale.height);
 
@@ -65,6 +43,7 @@ class GameScene extends Phaser.Scene {
         this.createPlatform(this.scale.width - 100, this.scale.height - 400, 1);
 
         player = this.physics.add.sprite(100, this.scale.height - 150, data.character);
+
         player.setBounce(0.2).setCollideWorldBounds(true);
 
         this.physics.add.collider(player, platforms);
@@ -98,6 +77,7 @@ class GameScene extends Phaser.Scene {
 
         const fullscreenButton = this.add.image(this.scale.width - 40, 40, 'fullscreen').setInteractive().setDisplaySize(32, 32);
         fullscreenButton.on('pointerdown', () => {
+            console.log('Fullscreen button clicked');
             if (this.scale.isFullscreen) {
                 this.scale.stopFullscreen();
             } else {
@@ -107,10 +87,21 @@ class GameScene extends Phaser.Scene {
 
         const reloadButton = this.add.image(this.scale.width - 40, 80, 'reload').setInteractive().setDisplaySize(32, 32);
         reloadButton.on('pointerdown', () => {
+            console.log('Reload button clicked');
             this.scene.restart();
         });
 
         this.createMobileControls();
+
+        // Create animations from the sprite sheet
+        this.anims.create({
+            key: 'walk',
+            frames: this.anims.generateFrameNumbers(data.character, { start: 0, end: 7 }), // Adjust the range according to your sprite sheet
+            frameRate: 10,
+            repeat: -1
+        });
+
+        player.anims.play('walk');
     }
 
     update() {
@@ -181,9 +172,8 @@ class GameScene extends Phaser.Scene {
         } else if (cursors.right.isDown || wasd.right.isDown || rightButton.isDown) {
             player.setVelocityX(160);
         }
-        if ((cursors.up.isDown || wasd.up.isDown || jumpButton.isDown) && (player.body.touching.down || player.body.onFloor())) {
-            player.setVelocityY(-500);  // Increase jump height
-            this.sound.play('jumpSound');
+        if ((cursors.up.isDown || wasd.up.isDown || jumpButton.isDown) && player.body.touching.down) {
+            player.setVelocityY(-330);
         }
     }
 
@@ -196,55 +186,56 @@ class GameScene extends Phaser.Scene {
         rightButton.setScrollFactor(0);
         jumpButton.setScrollFactor(0);
 
-        leftButton.on('pointerdown', () => leftButton.isDown = true);
-        leftButton.on('pointerup', () => leftButton.isDown = false);
-        leftButton.on('pointerout', () => leftButton.isDown = false);
+        leftButton.on('pointerdown', () => {
+            leftButton.isDown = true;
+            console.log('Left button pressed');
+        });
+        leftButton.on('pointerup', () => {
+            leftButton.isDown = false;
+            console.log('Left button released');
+        });
+        leftButton.on('pointerout', () => {
+            leftButton.isDown = false;
+            console.log('Left button out');
+        });
 
-        rightButton.on('pointerdown', () => rightButton.isDown = true);
-        rightButton.on('pointerup', () => rightButton.isDown = false);
-        rightButton.on('pointerout', () => rightButton.isDown = false);
+        rightButton.on('pointerdown', () => {
+            rightButton.isDown = true;
+            console.log('Right button pressed');
+        });
+        rightButton.on('pointerup', () => {
+            rightButton.isDown = false;
+            console.log('Right button released');
+        });
+        rightButton.on('pointerout', () => {
+            rightButton.isDown = false;
+            console.log('Right button out');
+        });
 
-        jumpButton.on('pointerdown', () => jumpButton.isDown = true);
-        jumpButton.on('pointerup', () => jumpButton.isDown = false);
-        jumpButton.on('pointerout', () => jumpButton.isDown = false);
+        jumpButton.on('pointerdown', () => {
+            jumpButton.isDown = true;
+            console.log('Jump button pressed');
+        });
+        jumpButton.on('pointerup', () => {
+            jumpButton.isDown = false;
+            console.log('Jump button released');
+        });
+        jumpButton.on('pointerout', () => {
+            jumpButton.isDown = false;
+            console.log('Jump button out');
+        });
     }
 }
 
 function collectStar(player, star) {
-    console.log('Collected a star!');
     star.disableBody(true, true);
     score += 10;
     scoreText.setText(`Score: ${score}`);
-    this.sound.play('collectStarSound');
 }
 
 function hitBomb(player, bomb) {
-    console.log('Hit by a bomb!');
-    bomb.disableBody(true, true);
+    this.physics.pause();
     player.setTint(0xff0000);
-    lives -= 1;
-    livesText.setText(`Lives: ${lives}`);
-    this.sound.play('hitBombSound');
-    if (lives <= 0) {
-        gameOver = true;
-        this.saveHighScore();
-        backgroundMusic.stop();
-        this.time.delayedCall(2000, () => {
-            this.scene.start('MenuScene'); // Go back to the menu
-        });
-    } else {
-        this.time.delayedCall(1000, () => {
-            bomb.enableBody(true, bomb.x, bomb.y, true, true);
-            player.clearTint();
-        });
-    }
-}
-
-GameScene.prototype.saveHighScore = function() {
-    let name = prompt('Game Over! Enter your name:');
-    if (name) {
-        let scores = JSON.parse(localStorage.getItem('scores')) || [];
-        scores.push({ name: name, score: score });
-        localStorage.setItem('scores', JSON.stringify(scores));
-    }
+    player.anims.play('turn');
+    gameOver = true;
 }
