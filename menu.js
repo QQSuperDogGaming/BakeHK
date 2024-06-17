@@ -34,7 +34,7 @@ class MenuScene extends Phaser.Scene {
         const leaderboardButton = this.add.image(this.scale.width / 2, this.scale.height / 2 + 100, 'leaderboardButton').setInteractive().setDisplaySize(200, 80);
         leaderboardButton.on('pointerdown', () => {
             console.log('Leaderboard button clicked');
-            this.showLeaderboard();
+            this.scene.start('LeaderboardScene');
         });
 
         // Add character selection and map selection elements
@@ -66,10 +66,6 @@ class MenuScene extends Phaser.Scene {
             console.log('Map 2 selected');
             this.selectedMap = 'map2';
         });
-
-        // Add leaderboard text but initially hide it
-        this.leaderboard = this.add.text(this.scale.width / 2, this.scale.height / 2 + 200, '', { fontSize: '32px', fill: '#000' }).setOrigin(0.5);
-        this.leaderboard.visible = false;
     }
 
     startGame() {
@@ -77,16 +73,6 @@ class MenuScene extends Phaser.Scene {
         const selectedMap = this.selectedMap || 'map1'; // Default to map1 if not selected
         this.scene.start('GameScene', { character: selectedCharacter, map: selectedMap });
     }
-
-    showLeaderboard() {
-        const scores = JSON.parse(localStorage.getItem('scores')) || [];
-
-        let leaderboardText = 'Leaderboard\n';
-        scores.forEach((entry, index) => {
-            leaderboardText += `${index + 1}. ${entry.player}: ${entry.score}\n`;
-        });
-
-        this.leaderboard.setText(leaderboardText);
-        this.leaderboard.visible = !this.leaderboard.visible;
-    }
 }
+
+export default MenuScene;
