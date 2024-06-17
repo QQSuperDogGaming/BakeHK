@@ -45,13 +45,7 @@ class GameScene extends Phaser.Scene {
 
         this.physics.add.collider(player, platforms);
 
-        cursors = this.input.keyboard.createCursorKeys();
-        wasd = this.input.keyboard.addKeys({
-            up: Phaser.Input.Keyboard.KeyCodes.W,
-            left: Phaser.Input.Keyboard.KeyCodes.A,
-            down: Phaser.Input.Keyboard.KeyCodes.S,
-            right: Phaser.Input.Keyboard.KeyCodes.D
-        });
+        this.initializeControls();
 
         stars = this.physics.add.group();
         this.physics.add.collider(stars, platforms);
@@ -169,9 +163,19 @@ class GameScene extends Phaser.Scene {
         } else if (cursors.right.isDown || wasd.right.isDown || rightButton.isDown) {
             player.setVelocityX(160);
         }
-        if (cursors.up.isDown || wasd.up.isDown || jumpButton.isDown) {
+        if ((cursors.up.isDown || wasd.up.isDown || jumpButton.isDown) && player.body.touching.down) {
             player.setVelocityY(-330);
         }
+    }
+
+    initializeControls() {
+        cursors = this.input.keyboard.createCursorKeys();
+        wasd = this.input.keyboard.addKeys({
+            up: Phaser.Input.Keyboard.KeyCodes.W,
+            left: Phaser.Input.Keyboard.KeyCodes.A,
+            down: Phaser.Input.Keyboard.KeyCodes.S,
+            right: Phaser.Input.Keyboard.KeyCodes.D
+        });
     }
 
     createMobileControls() {
@@ -259,6 +263,7 @@ function hitBomb(player, bomb) {
     // After a short delay, restart the game
     this.time.delayedCall(1000, () => {
         gameOver = false;
+        score = 0;
         this.scene.restart();
     });
 }
