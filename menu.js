@@ -6,6 +6,7 @@ class MenuScene extends Phaser.Scene {
     preload() {
         this.load.image('fullscreen', 'assets/fullscreen.png');
         this.load.image('playButton', 'assets/playButton.png');
+        this.load.image('leaderboardButton', 'assets/leaderboardButton.png');
         this.load.image('character1', 'assets/character1.png');
         this.load.image('character2', 'assets/character2.png');
         this.load.image('character3', 'assets/character3.png');
@@ -28,6 +29,12 @@ class MenuScene extends Phaser.Scene {
             } else {
                 this.scale.startFullscreen();
             }
+        });
+
+        const leaderboardButton = this.add.image(this.scale.width / 2, this.scale.height / 2 + 100, 'leaderboardButton').setInteractive().setDisplaySize(200, 80);
+        leaderboardButton.on('pointerdown', () => {
+            console.log('Leaderboard button clicked');
+            this.showLeaderboard();
         });
 
         // Add character selection and map selection elements
@@ -60,9 +67,9 @@ class MenuScene extends Phaser.Scene {
             this.selectedMap = 'map2';
         });
 
-        // Add leaderboard
-        this.leaderboard = this.add.text(this.scale.width / 2, this.scale.height / 2 + 100, 'Leaderboard', { fontSize: '32px', fill: '#000' }).setOrigin(0.5);
-        this.updateLeaderboard();
+        // Add leaderboard text but initially hide it
+        this.leaderboard = this.add.text(this.scale.width / 2, this.scale.height / 2 + 200, '', { fontSize: '32px', fill: '#000' }).setOrigin(0.5);
+        this.leaderboard.visible = false;
     }
 
     startGame() {
@@ -71,7 +78,7 @@ class MenuScene extends Phaser.Scene {
         this.scene.start('GameScene', { character: selectedCharacter, map: selectedMap });
     }
 
-    updateLeaderboard() {
+    showLeaderboard() {
         const scores = JSON.parse(localStorage.getItem('scores')) || [];
 
         let leaderboardText = 'Leaderboard\n';
@@ -80,5 +87,6 @@ class MenuScene extends Phaser.Scene {
         });
 
         this.leaderboard.setText(leaderboardText);
+        this.leaderboard.visible = !this.leaderboard.visible;
     }
 }
