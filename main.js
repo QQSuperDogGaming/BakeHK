@@ -93,10 +93,10 @@ class GameScene extends Phaser.Scene {
 
         this.createMobileControls();
 
-        // Create animations from the sprite sheet
+        // Ensure the sprite sheets are correctly used and frames are defined
         this.anims.create({
             key: 'walk',
-            frames: this.anims.generateFrameNumbers(data.character, { start: 0, end: 7 }), // Adjust the range according to your sprite sheet
+            frames: this.anims.generateFrameNumbers(data.character, { start: 0, end: 3 }), // Adjusted frame range
             frameRate: 10,
             repeat: -1
         });
