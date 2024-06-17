@@ -169,7 +169,7 @@ class GameScene extends Phaser.Scene {
         } else if (cursors.right.isDown || wasd.right.isDown || rightButton.isDown) {
             player.setVelocityX(160);
         }
-        if ((cursors.up.isDown || wasd.up.isDown || jumpButton.isDown)) {
+        if (cursors.up.isDown || wasd.up.isDown || jumpButton.isDown) {
             player.setVelocityY(-330);
         }
     }
@@ -246,10 +246,20 @@ function collectStar(player, star) {
 }
 
 function hitBomb(player, bomb) {
-    this.physics.pause();
     player.setTint(0xff0000);
+    this.physics.pause();
     gameOver = true;
-    this.scene.get('GameScene').updateLeaderboard();  // Update leaderboard after hitting a bomb
+
+    // Update leaderboard and save score
+    const scores = JSON.parse(localStorage.getItem('scores')) || [];
+    scores.push({ player: 'Player', score: score });
+    scores.sort((a, b) => b.score - a.score);
+    localStorage.setItem('scores', JSON.stringify(scores.slice(0, 5))); // Keep top 5 scores
+
+    // After a short delay, restart the game
+    this.time.delayedCall(1000, () => {
+        this.scene.restart();
+    });
 }
 
 const config = {
