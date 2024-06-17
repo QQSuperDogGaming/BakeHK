@@ -23,9 +23,9 @@ class GameScene extends Phaser.Scene {
         this.load.image('jumpButton', 'assets/jumpButton.png');
         this.load.image('fullscreen', 'assets/fullscreen.png');
         this.load.image('reload', 'assets/reload.png');
-        this.load.spritesheet('character1', 'assets/character1.png', { frameWidth: 32, frameHeight: 48 });
-        this.load.spritesheet('character2', 'assets/character2.png', { frameWidth: 32, frameHeight: 48 });
-        this.load.spritesheet('character3', 'assets/character3.png', { frameWidth: 32, frameHeight: 48 });
+        this.load.image('character1', 'assets/character1.png');
+        this.load.image('character2', 'assets/character2.png');
+        this.load.image('character3', 'assets/character3.png');
     }
 
     create(data) {
@@ -92,16 +92,6 @@ class GameScene extends Phaser.Scene {
         });
 
         this.createMobileControls();
-
-        // Ensure the sprite sheets are correctly used and frames are defined
-        this.anims.create({
-            key: 'walk',
-            frames: this.anims.generateFrameNumbers(data.character, { start: 0, end: 3 }), // Adjusted frame range
-            frameRate: 10,
-            repeat: -1
-        });
-
-        player.anims.play('walk');
     }
 
     update() {
@@ -236,7 +226,6 @@ function collectStar(player, star) {
 function hitBomb(player, bomb) {
     this.physics.pause();
     player.setTint(0xff0000);
-    player.anims.play('turn');
     gameOver = true;
 }
 
