@@ -59,11 +59,26 @@ class MenuScene extends Phaser.Scene {
             console.log('Map 2 selected');
             this.selectedMap = 'map2';
         });
+
+        // Add leaderboard
+        this.leaderboard = this.add.text(this.scale.width / 2, this.scale.height / 2 + 100, 'Leaderboard', { fontSize: '32px', fill: '#000' }).setOrigin(0.5);
+        this.updateLeaderboard();
     }
 
     startGame() {
         const selectedCharacter = this.selectedCharacter || 'character1'; // Default to character1 if not selected
         const selectedMap = this.selectedMap || 'map1'; // Default to map1 if not selected
         this.scene.start('GameScene', { character: selectedCharacter, map: selectedMap });
+    }
+
+    updateLeaderboard() {
+        const scores = JSON.parse(localStorage.getItem('scores')) || [];
+
+        let leaderboardText = 'Leaderboard\n';
+        scores.forEach((entry, index) => {
+            leaderboardText += `${index + 1}. ${entry.player}: ${entry.score}\n`;
+        });
+
+        this.leaderboard.setText(leaderboardText);
     }
 }
