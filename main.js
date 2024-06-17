@@ -56,7 +56,7 @@ class GameScene extends Phaser.Scene {
         this.physics.add.collider(player, bombs, hitBomb, null, this);
 
         scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
-        livesText = this.add.text(16, 80, 'Lives: 3', { fontSize: '32px', fill: '#000' });
+        livesText = this.add.text(16, 80, `Lives: ${lives}`, { fontSize: '32px', fill: '#000' });
 
         this.createStar();
         this.time.addEvent({ delay: 1000, callback: () => this.createStar(), callbackScope: this, loop: true });
@@ -179,9 +179,9 @@ class GameScene extends Phaser.Scene {
     }
 
     createMobileControls() {
-        leftButton = this.add.image(100, this.scale.height - 100, 'leftButton').setInteractive().setDisplaySize(80, 80);
-        rightButton = this.add.image(200, this.scale.height - 100, 'rightButton').setInteractive().setDisplaySize(80, 80);
-        jumpButton = this.add.image(this.scale.width - 100, this.scale.height - 100, 'jumpButton').setInteractive().setDisplaySize(80, 80);
+        leftButton = this.add.image(100, this.scale.height - 100, 'leftButton').setInteractive().setDisplaySize(120, 120); // Increased size
+        rightButton = this.add.image(250, this.scale.height - 100, 'rightButton').setInteractive().setDisplaySize(120, 120); // Increased size
+        jumpButton = this.add.image(this.scale.width - 150, this.scale.height - 100, 'jumpButton').setInteractive().setDisplaySize(120, 120); // Increased size
 
         leftButton.setScrollFactor(0);
         rightButton.setScrollFactor(0);
@@ -252,20 +252,33 @@ function collectStar(player, star) {
 function hitBomb(player, bomb) {
     player.setTint(0xff0000);
     this.physics.pause();
-    gameOver = true;
+    lives -= 1;
+    livesText.setText(`Lives: ${lives}`);
 
-    // Update leaderboard and save score
-    const scores = JSON.parse(localStorage.getItem('scores')) || [];
-    scores.push({ player: 'Player', score: score });
-    scores.sort((a, b) => b.score - a.score);
-    localStorage.setItem('scores', JSON.stringify(scores.slice(0, 5))); // Keep top 5 scores
+    if (lives <= 0) {
+        gameOver = true;
+        // Update leaderboard and save score
+        const scores = JSON.parse(localStorage.getItem('scores')) || [];
+        scores.push({ player: 'Player', score: score });
+        scores.sort((a, b) => b.score - a.score);
+        localStorage.setItem('scores', JSON.stringify(scores.slice(0, 5))); // Keep top 5 scores
 
-    // After a short delay, restart the game
-    this.time.delayedCall(1000, () => {
-        gameOver = false;
-        score = 0;
-        this.scene.restart();
-    });
+        // After a short delay, restart the game
+        this.time.delayedCall(1000, () => {
+            gameOver = false;
+            score = 0;
+            lives = 3;
+            this.scene.restart();
+        });
+    } else {
+        // Remove bomb
+        bomb.disableBody(true, true);
+        // Allow player to continue
+        this.time.delayedCall(1000, () => {
+            player.clearTint();
+            this.physics.resume();
+        });
+    }
 }
 
 const config = {
