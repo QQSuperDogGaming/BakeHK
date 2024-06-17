@@ -169,7 +169,7 @@ class GameScene extends Phaser.Scene {
         } else if (cursors.right.isDown || wasd.right.isDown || rightButton.isDown) {
             player.setVelocityX(160);
         }
-        if (cursors.up.isDown || wasd.up.isDown || jumpButton.isDown) {
+        if ((cursors.up.isDown || wasd.up.isDown || jumpButton.isDown)) {
             player.setVelocityY(-330);
         }
     }
@@ -224,9 +224,17 @@ class GameScene extends Phaser.Scene {
     }
 
     updateLeaderboard() {
-        // This function should update the leaderboard text with actual data
-        // For now, it's just a placeholder
-        leaderboard.setText('Leaderboard\n1. Player1: 100\n2. Player2: 80\n3. Player3: 60');
+        const scores = JSON.parse(localStorage.getItem('scores')) || [];
+        scores.push({ player: 'Player', score: score });
+        scores.sort((a, b) => b.score - a.score);
+        localStorage.setItem('scores', JSON.stringify(scores.slice(0, 5))); // Keep top 5 scores
+
+        let leaderboardText = 'Leaderboard\n';
+        scores.forEach((entry, index) => {
+            leaderboardText += `${index + 1}. ${entry.player}: ${entry.score}\n`;
+        });
+
+        leaderboard.setText(leaderboardText);
     }
 }
 
