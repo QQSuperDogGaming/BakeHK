@@ -5,6 +5,7 @@ let scoreText, livesText;
 let gameOver = false;
 let score = 0;
 let lives = 3;
+let leaderboard;
 
 class GameScene extends Phaser.Scene {
     constructor() {
@@ -91,6 +92,10 @@ class GameScene extends Phaser.Scene {
 
         // Resize game when window is resized
         this.scale.on('resize', this.resize, this);
+
+        // Leaderboard
+        leaderboard = this.add.text(this.scale.width - 200, 16, 'Leaderboard', { fontSize: '32px', fill: '#000' });
+        this.updateLeaderboard();
     }
 
     update() {
@@ -107,6 +112,7 @@ class GameScene extends Phaser.Scene {
             this.cameras.resize(width, height);
             scoreText.setPosition(16, 16);
             livesText.setPosition(16, 80);
+            leaderboard.setPosition(width - 200, 16);
         }
     }
 
@@ -163,7 +169,7 @@ class GameScene extends Phaser.Scene {
         } else if (cursors.right.isDown || wasd.right.isDown || rightButton.isDown) {
             player.setVelocityX(160);
         }
-        if ((cursors.up.isDown || wasd.up.isDown || jumpButton.isDown) && player.body.touching.down) {
+        if (cursors.up.isDown || wasd.up.isDown || jumpButton.isDown) {
             player.setVelocityY(-330);
         }
     }
@@ -216,18 +222,26 @@ class GameScene extends Phaser.Scene {
             console.log('Jump button out');
         });
     }
+
+    updateLeaderboard() {
+        // This function should update the leaderboard text with actual data
+        // For now, it's just a placeholder
+        leaderboard.setText('Leaderboard\n1. Player1: 100\n2. Player2: 80\n3. Player3: 60');
+    }
 }
 
 function collectStar(player, star) {
     star.disableBody(true, true);
     score += 10;
     scoreText.setText(`Score: ${score}`);
+    this.scene.get('GameScene').updateLeaderboard();  // Update leaderboard after collecting a star
 }
 
 function hitBomb(player, bomb) {
     this.physics.pause();
     player.setTint(0xff0000);
     gameOver = true;
+    this.scene.get('GameScene').updateLeaderboard();  // Update leaderboard after hitting a bomb
 }
 
 const config = {
