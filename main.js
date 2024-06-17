@@ -258,6 +258,7 @@ function hitBomb(player, bomb) {
 
     // After a short delay, restart the game
     this.time.delayedCall(1000, () => {
+        gameOver = false;
         this.scene.restart();
     });
 }
