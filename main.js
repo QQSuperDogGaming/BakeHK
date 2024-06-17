@@ -12,7 +12,7 @@ class GameScene extends Phaser.Scene {
     }
 
     preload() {
-        // Preload map images
+        // Preload assets
         this.load.image('map1', 'assets/map1.png');
         this.load.image('map2', 'assets/map2.png');
         this.load.image('ground', 'assets/platform.png');
@@ -40,7 +40,6 @@ class GameScene extends Phaser.Scene {
         this.createPlatform(this.scale.width - 100, this.scale.height - 400, 1);
 
         player = this.physics.add.sprite(100, this.scale.height - 150, data.character);
-
         player.setBounce(0.2).setCollideWorldBounds(true);
 
         this.physics.add.collider(player, platforms);
@@ -89,12 +88,26 @@ class GameScene extends Phaser.Scene {
         });
 
         this.createMobileControls();
+
+        // Resize game when window is resized
+        this.scale.on('resize', this.resize, this);
     }
 
     update() {
         if (gameOver) return;
 
         this.handlePlayerMovement(player, cursors, wasd, leftButton, rightButton, jumpButton);
+    }
+
+    resize(gameSize, baseSize, displaySize, resolution) {
+        const width = gameSize.width;
+        const height = gameSize.height;
+
+        if (this.cameras.main) {
+            this.cameras.resize(width, height);
+            scoreText.setPosition(16, 16);
+            livesText.setPosition(16, 80);
+        }
     }
 
     createPlatform(x, y, scaleX = 1) {
@@ -150,7 +163,7 @@ class GameScene extends Phaser.Scene {
         } else if (cursors.right.isDown || wasd.right.isDown || rightButton.isDown) {
             player.setVelocityX(160);
         }
-        if (cursors.up.isDown || wasd.up.isDown || jumpButton.isDown) {
+        if ((cursors.up.isDown || wasd.up.isDown || jumpButton.isDown) && player.body.touching.down) {
             player.setVelocityY(-330);
         }
     }
@@ -219,8 +232,8 @@ function hitBomb(player, bomb) {
 
 const config = {
     type: Phaser.AUTO,
-    width: 800,
-    height: 600,
+    width: window.innerWidth,
+    height: window.innerHeight,
     scene: [MenuScene, GameScene],
     physics: {
         default: 'arcade',
@@ -228,7 +241,15 @@ const config = {
             gravity: { y: 300 },
             debug: false
         }
+    },
+    scale: {
+        mode: Phaser.Scale.RESIZE,
+        autoCenter: Phaser.Scale.CENTER_BOTH
     }
 };
 
 const game = new Phaser.Game(config);
+
+window.addEventListener('resize', () => {
+    game.scale.resize(window.innerWidth, window.innerHeight);
+});
