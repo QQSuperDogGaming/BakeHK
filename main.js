@@ -1,8 +1,3 @@
-
-### `main.js`:
-Define the `GameScene` class in `main.js` and configure the Phaser game.
-
-```javascript
 let player;
 let cursors, wasd, leftButton, rightButton, jumpButton;
 let stars, bombs, platforms;
