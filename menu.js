@@ -63,4 +63,7 @@ class MenuScene extends Phaser.Scene {
 
     startGame() {
         const selectedCharacter = this.selectedCharacter || 'character1'; // Default to character1 if not selected
-        const selectedMap = this.selectedMap || 'map1'; // Default to
+        const selectedMap = this.selectedMap || 'map1'; // Default to map1 if not selected
+        this.scene.start('GameScene', { character: selectedCharacter, map: selectedMap });
+    }
+}
