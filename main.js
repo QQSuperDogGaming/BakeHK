@@ -7,8 +7,8 @@ class MenuScene extends Phaser.Scene {
         this.load.image('fullscreen', 'assets/fullscreen.png');
         this.load.image('playButton', 'assets/playButton.png');
         this.load.image('leaderboardButton', 'assets/leaderboardButton.png');
-        this.load.image('backButton', 'assets/backButton.png'); // Preload backButton image
-        this.load.image('menuBackground', 'assets/menuBackground.png'); // Preload menu background image
+        this.load.image('backButton', 'assets/backButton.png');
+        this.load.image('menuBackground', 'assets/menuBackground.png');
         this.load.image('character1', 'assets/character1.png');
         this.load.image('character2', 'assets/character2.png');
         this.load.image('character3', 'assets/character3.png');
@@ -17,7 +17,6 @@ class MenuScene extends Phaser.Scene {
     }
 
     create() {
-        // Add background image
         this.add.image(this.scale.width / 2, this.scale.height / 2, 'menuBackground').setDisplaySize(this.scale.width, this.scale.height);
 
         const playButton = this.add.image(this.scale.width / 2, this.scale.height / 2, 'playButton').setInteractive().setDisplaySize(200, 80);
@@ -42,7 +41,6 @@ class MenuScene extends Phaser.Scene {
             this.scene.start('LeaderboardScene');
         });
 
-        // Add character selection and map selection elements
         const character1 = this.add.image(this.scale.width / 2 - 100, this.scale.height / 2 - 200, 'character1').setInteractive().setDisplaySize(50, 50);
         const character2 = this.add.image(this.scale.width / 2, this.scale.height / 2 - 200, 'character2').setInteractive().setDisplaySize(50, 50);
         const character3 = this.add.image(this.scale.width / 2 + 100, this.scale.height / 2 - 200, 'character3').setInteractive().setDisplaySize(50, 50);
@@ -74,8 +72,8 @@ class MenuScene extends Phaser.Scene {
     }
 
     startGame() {
-        const selectedCharacter = this.selectedCharacter || 'character1'; // Default to character1 if not selected
-        const selectedMap = this.selectedMap || 'map1'; // Default to map1 if not selected
+        const selectedCharacter = this.selectedCharacter || 'character1';
+        const selectedMap = this.selectedMap || 'map1';
         this.scene.start('GameScene', { character: selectedCharacter, map: selectedMap });
     }
 }
@@ -120,7 +118,6 @@ class GameScene extends Phaser.Scene {
     }
 
     preload() {
-        // Preload assets
         this.load.image('map1', 'assets/map1.png');
         this.load.image('map2', 'assets/map2.png');
         this.load.image('ground', 'assets/platform.png');
@@ -137,7 +134,6 @@ class GameScene extends Phaser.Scene {
     }
 
     create(data) {
-        // Use the selected map
         this.add.image(this.scale.width / 2, this.scale.height / 2, data.map).setDisplaySize(this.scale.width, this.scale.height);
 
         platforms = this.physics.add.staticGroup();
