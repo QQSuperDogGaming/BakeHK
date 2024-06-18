@@ -104,7 +104,7 @@ class LeaderboardScene extends Phaser.Scene {
 }
 
 let player;
-let cursors, wasd, spaceBar;
+let cursors, wasd, leftButton, rightButton, jumpButton;
 let stars, bombs, platforms;
 let scoreText, livesText;
 let gameOver = false;
@@ -187,8 +187,10 @@ class GameScene extends Phaser.Scene {
 
         this.createMobileControls();
 
+        // Resize game when window is resized
         this.scale.on('resize', this.resize, this);
 
+        // Leaderboard
         leaderboard = this.add.text(this.scale.width - 200, 16, 'Leaderboard', { fontSize: '32px', fill: '#000' });
         this.updateLeaderboard();
     }
@@ -196,7 +198,7 @@ class GameScene extends Phaser.Scene {
     update() {
         if (gameOver) return;
 
-        this.handlePlayerMovement(player, cursors, wasd, spaceBar);
+        this.handlePlayerMovement(player, cursors, wasd, leftButton, rightButton, jumpButton);
     }
 
     resize(gameSize, baseSize, displaySize, resolution) {
@@ -257,14 +259,14 @@ class GameScene extends Phaser.Scene {
         });
     }
 
-    handlePlayerMovement(player, cursors, wasd, spaceBar) {
+    handlePlayerMovement(player, cursors, wasd, leftButton, rightButton, jumpButton) {
         player.setVelocityX(0);
-        if (cursors.left.isDown || wasd.left.isDown) {
+        if (cursors.left.isDown || wasd.left.isDown || leftButton.isDown) {
             player.setVelocityX(-160);
-        } else if (cursors.right.isDown || wasd.right.isDown) {
+        } else if (cursors.right.isDown || wasd.right.isDown || rightButton.isDown) {
             player.setVelocityX(160);
         }
-        if ((cursors.up.isDown || wasd.up.isDown || spaceBar.isDown) && player.body.touching.down) {
+        if ((cursors.up.isDown || wasd.up.isDown || jumpButton.isDown) && player.body.touching.down) {
             player.setVelocityY(-330);
         }
     }
@@ -277,13 +279,12 @@ class GameScene extends Phaser.Scene {
             down: Phaser.Input.Keyboard.KeyCodes.S,
             right: Phaser.Input.Keyboard.KeyCodes.D
         });
-        spaceBar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
     }
 
     createMobileControls() {
-        leftButton = this.add.image(100, this.scale.height - 100, 'leftButton').setInteractive().setDisplaySize(120, 120);
-        rightButton = this.add.image(250, this.scale.height - 100, 'rightButton').setInteractive().setDisplaySize(120, 120);
-        jumpButton = this.add.image(this.scale.width - 150, this.scale.height - 100, 'jumpButton').setInteractive().setDisplaySize(120, 120);
+        leftButton = this.add.image(100, this.scale.height - 100, 'leftButton').setInteractive().setDisplaySize(120, 120); // Increased size
+        rightButton = this.add.image(250, this.scale.height - 100, 'rightButton').setInteractive().setDisplaySize(120, 120); // Increased size
+        jumpButton = this.add.image(this.scale.width - 150, this.scale.height - 100, 'jumpButton').setInteractive().setDisplaySize(120, 120); // Increased size
 
         leftButton.setScrollFactor(0);
         rightButton.setScrollFactor(0);
@@ -333,7 +334,7 @@ class GameScene extends Phaser.Scene {
         const scores = JSON.parse(localStorage.getItem('scores')) || [];
         scores.push({ player: 'Player', score: score });
         scores.sort((a, b) => b.score - a.score);
-        localStorage.setItem('scores', JSON.stringify(scores.slice(0, 5)));
+        localStorage.setItem('scores', JSON.stringify(scores.slice(0, 5))); // Keep top 5 scores
 
         let leaderboardText = 'Leaderboard\n';
         scores.forEach((entry, index) => {
@@ -348,7 +349,7 @@ function collectStar(player, star) {
     star.disableBody(true, true);
     score += 10;
     scoreText.setText(`Score: ${score}`);
-    this.scene.get('GameScene').updateLeaderboard();
+    this.scene.get('GameScene').updateLeaderboard();  // Update leaderboard after collecting a star
 }
 
 function hitBomb(player, bomb) {
@@ -359,11 +360,13 @@ function hitBomb(player, bomb) {
 
     if (lives <= 0) {
         gameOver = true;
+        // Update leaderboard and save score
         const scores = JSON.parse(localStorage.getItem('scores')) || [];
         scores.push({ player: 'Player', score: score });
         scores.sort((a, b) => b.score - a.score);
-        localStorage.setItem('scores', JSON.stringify(scores.slice(0, 5)));
+        localStorage.setItem('scores', JSON.stringify(scores.slice(0, 5))); // Keep top 5 scores
 
+        // After a short delay, restart the game
         this.time.delayedCall(1000, () => {
             gameOver = false;
             score = 0;
@@ -371,7 +374,9 @@ function hitBomb(player, bomb) {
             this.scene.restart();
         });
     } else {
+        // Remove bomb
         bomb.disableBody(true, true);
+        // Allow player to continue
         this.time.delayedCall(1000, () => {
             player.clearTint();
             this.physics.resume();
