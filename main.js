@@ -8,6 +8,7 @@ class MenuScene extends Phaser.Scene {
         this.load.image('playButton', 'assets/playButton.png');
         this.load.image('leaderboardButton', 'assets/leaderboardButton.png');
         this.load.image('backButton', 'assets/backButton.png'); // Preload backButton image
+        this.load.image('menuBackground', 'assets/menuBackground.png'); // Preload menu background image
         this.load.image('character1', 'assets/character1.png');
         this.load.image('character2', 'assets/character2.png');
         this.load.image('character3', 'assets/character3.png');
@@ -16,6 +17,9 @@ class MenuScene extends Phaser.Scene {
     }
 
     create() {
+        // Add background image
+        this.add.image(this.scale.width / 2, this.scale.height / 2, 'menuBackground').setDisplaySize(this.scale.width, this.scale.height);
+
         const playButton = this.add.image(this.scale.width / 2, this.scale.height / 2, 'playButton').setInteractive().setDisplaySize(200, 80);
         playButton.on('pointerdown', () => {
             console.log('Play button clicked');
