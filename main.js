@@ -198,13 +198,13 @@ class GameScene extends Phaser.Scene {
             this.cameras.resize(width, height);
             scoreText.setPosition(16, 16);
             livesText.setPosition(16, 80);
-            leaderboard.setPosition(width - 200, 16);
+            leaderboard.setPosition(width - 200
+, 16);
         }
     }
 
     createPlatform(x, y, scaleX = 1) {
-        const platform = platforms.create(x, y, 'ground```javascript
-');
+        const platform = platforms.create(x, y, 'ground');
         platform.setScale(scaleX).refreshBody();
 
         // Set a timer to destroy the platform after 10 seconds
