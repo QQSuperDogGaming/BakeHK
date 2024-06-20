@@ -121,6 +121,7 @@ class GameScene extends Phaser.Scene {
         this.load.image('jumpButton', 'assets/jumpButton.png');
         this.load.image('fullscreen', 'assets/fullscreen.png');
         this.load.image('reload', 'assets/reload.png');
+        this.load.image('backButton', 'assets/backButton.png'); // New back button
         this.load.image('character1', 'assets/character1.png');
         this.load.image('character2', 'assets/character2.png');
         this.load.image('character3', 'assets/character3.png');
@@ -176,6 +177,11 @@ class GameScene extends Phaser.Scene {
             this.scene.restart();
         });
 
+        const backButton = this.add.image(this.scale.width - 40, 120, 'backButton').setInteractive().setDisplaySize(32, 32);
+        backButton.on('pointerdown', () => {
+            this.scene.start('MenuScene');
+        });
+
         this.createMobileControls();
 
         this.scale.on('resize', this.resize, this);
@@ -196,10 +202,10 @@ class GameScene extends Phaser.Scene {
 
         if (this.cameras.main) {
             this.cameras.resize(width, height);
-            scoreText.setPosition(16, 16);
+            scoreText.setPosition```javascript
+(16, 16);
             livesText.setPosition(16, 80);
-            leaderboard.setPosition(width - 200
-, 16);
+            leaderboard.setPosition(width - 200, 16);
         }
     }
 
@@ -281,9 +287,9 @@ class GameScene extends Phaser.Scene {
     }
 
     createMobileControls() {
-        leftButton = this.add.image(100, this.scale.height - 100, 'leftButton').setInteractive().setDisplaySize(120, 120);
-        rightButton = this.add.image(250, this.scale.height - 100, 'rightButton').setInteractive().setDisplaySize(120, 120);
-        jumpButton = this.add.image(this.scale.width - 150, this.scale.height - 100, 'jumpButton').setInteractive().setDisplaySize(120, 120);
+        leftButton = this.add.image(100, this.scale.height - 300, 'leftButton').setInteractive().setDisplaySize(120, 120);
+        rightButton = this.add.image(250, this.scale.height - 300, 'rightButton').setInteractive().setDisplaySize(120, 120);
+        jumpButton = this.add.image(this.scale.width - 150, this.scale.height - 300, 'jumpButton').setInteractive().setDisplaySize(120, 120);
 
         leftButton.setScrollFactor(0);
         rightButton.setScrollFactor(0);
