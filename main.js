@@ -9,9 +9,9 @@ class MenuScene extends Phaser.Scene {
         this.load.image('leaderboardButton', 'assets/leaderboardButton.png');
         this.load.image('backButton', 'assets/backButton.png');
         this.load.image('menuBackground', 'assets/menuBackground.png');
-        this.load.image('character1Button', 'assets/character1Button.png');
-        this.load.image('character2Button', 'assets/character2Button.png');
-        this.load.image('character3Button', 'assets/character3Button.png');
+        this.load.image('character1', 'assets/character1Button.png');
+        this.load.image('character2', 'assets/character2Button.png');
+        this.load.image('character3', 'assets/character3Button.png');
         this.load.image('map1', 'assets/map1.png');
         this.load.image('map2', 'assets/map2.png');
         this.load.image('leaderboardBackground', 'assets/leaderboardBackground.png'); // Preload leaderboard background
@@ -22,7 +22,7 @@ class MenuScene extends Phaser.Scene {
 
         const playButton = this.add.image(this.scale.width / 2, this.scale.height / 2, 'playButton').setInteractive().setDisplaySize(200, 80);
         playButton.on('pointerdown', () => {
-            this.startGame();
+            document.getElementById('username-container').style.display = 'block';
         });
 
         const fullscreenButton = this.add.image(this.scale.width - 40, 40, 'fullscreen').setInteractive().setDisplaySize(32, 32);
@@ -39,9 +39,9 @@ class MenuScene extends Phaser.Scene {
             this.scene.start('LeaderboardScene');
         });
 
-        const character1 = this.add.image(this.scale.width / 2 - 100, this.scale.height / 2 - 200, 'character1Button').setInteractive().setDisplaySize(50, 50);
-        const character2 = this.add.image(this.scale.width / 2, this.scale.height / 2 - 200, 'character2Button').setInteractive().setDisplaySize(50, 50);
-        const character3 = this.add.image(this.scale.width / 2 + 100, this.scale.height / 2 - 200, 'character3Button').setInteractive().setDisplaySize(50, 50);
+        const character1 = this.add.image(this.scale.width / 2 - 100, this.scale.height / 2 - 200, 'character1').setInteractive().setDisplaySize(50, 50);
+        const character2 = this.add.image(this.scale.width / 2, this.scale.height / 2 - 200, 'character2').setInteractive().setDisplaySize(50, 50);
+        const character3 = this.add.image(this.scale.width / 2 + 100, this.scale.height / 2 - 200, 'character3').setInteractive().setDisplaySize(50, 50);
 
         const map1 = this.add.image(this.scale.width / 2 - 100, this.scale.height / 2 - 100, 'map1').setInteractive().setDisplaySize(50, 50);
         const map2 = this.add.image(this.scale.width / 2, this.scale.height / 2 - 100, 'map2').setInteractive().setDisplaySize(50, 50);
@@ -61,6 +61,17 @@ class MenuScene extends Phaser.Scene {
         });
         map2.on('pointerdown', () => {
             this.selectedMap = 'map2';
+        });
+
+        document.getElementById('start-game').addEventListener('click', () => {
+            const username = document.getElementById('username').value;
+            if (username) {
+                localStorage.setItem('username', username);
+                document.getElementById('username-container').style.display = 'none';
+                this.startGame();
+            } else {
+                alert('Please enter your username.');
+            }
         });
     }
 
@@ -159,7 +170,8 @@ class GameScene extends Phaser.Scene {
         livesText = this.add.text(16, 80, `Lives: ${lives}`, { fontSize: '32px', fill: '#000' });
 
         this.createStar();
-        this.time.addEvent({ delay: 1000, callback: () => this.createStar(), callbackScope: this, loop: true });
+        this.time.addEvent({ delay: 1000, callback: () => this.createStar(), callbackScope: this,
+loop: true });
 
         this.createBomb();
         this.time.addEvent({ delay: 5000, callback: () => this.createBomb(), callbackScope: this, loop: true });
@@ -196,8 +208,7 @@ class GameScene extends Phaser.Scene {
     update() {
         if (gameOver) return;
 
-        this.handlePlayerMovement(player, cursors, wasd, leftButton,
-rightButton, jumpButton);
+        this.handlePlayerMovement(player, cursors, wasd, leftButton, rightButton, jumpButton);
     }
 
     resize(gameSize, baseSize, displaySize, resolution) {
@@ -331,7 +342,7 @@ rightButton, jumpButton);
 
     updateLeaderboard() {
         const scores = JSON.parse(localStorage.getItem('scores')) || [];
-        scores.push({ player: 'Player', score: score });
+        scores.push({ player: localStorage.getItem('username') || 'Player', score: score });
         scores.sort((a, b) => b.score - a.score);
         localStorage.setItem('scores', JSON.stringify(scores.slice(0, 5)));
 
@@ -360,7 +371,7 @@ function hitBomb(player, bomb) {
     if (lives <= 0) {
         gameOver = true;
         const scores = JSON.parse(localStorage.getItem('scores')) || [];
-        scores.push({ player: 'Player', score: score });
+        scores.push({ player: localStorage.getItem('username') || 'Player', score: score });
         scores.sort((a, b) => b.score - a.score);
         localStorage.setItem('scores', JSON.stringify(scores.slice(0, 5)));
 
