@@ -203,8 +203,8 @@ class GameScene extends Phaser.Scene {
     }
 
     createPlatform(x, y, scaleX = 1) {
-        const platform = platforms.create(x, y```javascript
-, 'ground');
+        const platform = platforms.create(x, y, 'ground```javascript
+');
         platform.setScale(scaleX).refreshBody();
 
         // Set a timer to destroy the platform after 10 seconds
