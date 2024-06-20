@@ -196,7 +196,8 @@ class GameScene extends Phaser.Scene {
     update() {
         if (gameOver) return;
 
-        this.handlePlayerMovement(player, cursors, wasd, leftButton, rightButton, jumpButton);
+        this.handlePlayerMovement(player, cursors, wasd, leftButton,
+rightButton, jumpButton);
     }
 
     resize(gameSize, baseSize, displaySize, resolution) {
