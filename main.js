@@ -9,9 +9,9 @@ class MenuScene extends Phaser.Scene {
         this.load.image('leaderboardButton', 'assets/leaderboardButton.png');
         this.load.image('backButton', 'assets/backButton.png');
         this.load.image('menuBackground', 'assets/menuBackground.png');
-        this.load.image('character1', 'assets/character1.png');
-        this.load.image('character2', 'assets/character2.png');
-        this.load.image('character3', 'assets/character3.png');
+        this.load.image('character1Button', 'assets/character1Button.png');
+        this.load.image('character2Button', 'assets/character2Button.png');
+        this.load.image('character3Button', 'assets/character3Button.png');
         this.load.image('map1', 'assets/map1.png');
         this.load.image('map2', 'assets/map2.png');
         this.load.image('leaderboardBackground', 'assets/leaderboardBackground.png'); // Preload leaderboard background
