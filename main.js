@@ -328,7 +328,7 @@ class GameScene extends Phaser.Scene {
 
         let leaderboardText = 'Leaderboard\n';
         scores.forEach((entry, index) => {
-            leaderboardText += `${index + 1}. ${entry.player}: ${entry.score}\n`;
+            leaderboardText += `{index + 1}. {entry.player}: {entry.score}\n`;
         });
 
         leaderboard.setText(leaderboardText);
