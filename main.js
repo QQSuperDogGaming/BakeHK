@@ -14,6 +14,7 @@ class MenuScene extends Phaser.Scene {
         this.load.image('character3', 'assets/character3.png');
         this.load.image('map1', 'assets/map1.png');
         this.load.image('map2', 'assets/map2.png');
+        this.load.image('leaderboardBackground', 'assets/leaderboardBackground.png'); // Preload leaderboard background
     }
 
     create() {
@@ -80,6 +81,8 @@ class LeaderboardScene extends Phaser.Scene {
     }
 
     create() {
+        this.add.image(this.scale.width / 2, this.scale.height / 2, 'leaderboardBackground').setDisplaySize(this.scale.width, this.scale.height);
+
         const scores = JSON.parse(localStorage.getItem('scores')) || [];
         let leaderboardText = 'Leaderboard\n';
         scores.forEach((entry, index) => {
@@ -193,13 +196,12 @@ class GameScene extends Phaser.Scene {
     update() {
         if (gameOver) return;
 
-        this.handlePlayerMovement(player, cursors, wasd, leftButton, rightButton, jumpButton);
+        this.handlePlayerMovement(player, cursors, wasd, leftButton, rightButton, jumpButton
     }
 
     resize(gameSize, baseSize, displaySize, resolution) {
         const width = gameSize.width;
-        const height = gameSize```javascript
-height;
+        const height = gameSize.height;
 
         if (this.cameras.main) {
             this.cameras.resize(width, height);
