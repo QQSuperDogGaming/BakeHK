@@ -39,9 +39,9 @@ class MenuScene extends Phaser.Scene {
             this.scene.start('LeaderboardScene');
         });
 
-        const character1 = this.add.image(this.scale.width / 2 - 100, this.scale.height / 2 - 200, 'character1').setInteractive().setDisplaySize(50, 50);
-        const character2 = this.add.image(this.scale.width / 2, this.scale.height / 2 - 200, 'character2').setInteractive().setDisplaySize(50, 50);
-        const character3 = this.add.image(this.scale.width / 2 + 100, this.scale.height / 2 - 200, 'character3').setInteractive().setDisplaySize(50, 50);
+        const character1 = this.add.image(this.scale.width / 2 - 100, this.scale.height / 2 - 200, 'character1Button').setInteractive().setDisplaySize(50, 50);
+        const character2 = this.add.image(this.scale.width / 2, this.scale.height / 2 - 200, 'character2Button').setInteractive().setDisplaySize(50, 50);
+        const character3 = this.add.image(this.scale.width / 2 + 100, this.scale.height / 2 - 200, 'character3Button').setInteractive().setDisplaySize(50, 50);
 
         const map1 = this.add.image(this.scale.width / 2 - 100, this.scale.height / 2 - 100, 'map1').setInteractive().setDisplaySize(50, 50);
         const map2 = this.add.image(this.scale.width / 2, this.scale.height / 2 - 100, 'map2').setInteractive().setDisplaySize(50, 50);
