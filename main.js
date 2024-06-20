@@ -9,9 +9,9 @@ class MenuScene extends Phaser.Scene {
         this.load.image('leaderboardButton', 'assets/leaderboardButton.png');
         this.load.image('backButton', 'assets/backButton.png');
         this.load.image('menuBackground', 'assets/menuBackground.png');
-        this.load.image('character1', 'assets/character1Button.png');
-        this.load.image('character2', 'assets/character2Button.png');
-        this.load.image('character3', 'assets/character3Button.png');
+        this.load.image('character1', 'assets/character1.png');
+        this.load.image('character2', 'assets/character2.png');
+        this.load.image('character3', 'assets/character3.png');
         this.load.image('map1', 'assets/map1.png');
         this.load.image('map2', 'assets/map2.png');
         this.load.image('leaderboardBackground', 'assets/leaderboardBackground.png'); // Preload leaderboard background
@@ -167,11 +167,11 @@ class GameScene extends Phaser.Scene {
         this.physics.add.collider(player, bombs, hitBomb, null, this);
 
         scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
-        livesText = this.add.text(16, 80, `Lives: ${lives}`, { fontSize: '32px', fill: '#000' });
+        livesText = this.add.text(
+16, 80, `Lives: ${lives}`, { fontSize: '32px', fill: '#000' });
 
         this.createStar();
-        this.time.addEvent({ delay: 1000, callback: () => this.createStar(), callbackScope: this,
-loop: true });
+        this.time.addEvent({ delay: 1000, callback: () => this.createStar(), callbackScope: this, loop: true });
 
         this.createBomb();
         this.time.addEvent({ delay: 5000, callback: () => this.createBomb(), callbackScope: this, loop: true });
