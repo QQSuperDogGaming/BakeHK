@@ -201,7 +201,7 @@ class GameScene extends Phaser.Scene {
     }
 
     resize(gameSize, baseSize, displaySize, resolution) {
-        const width =gameSize.width;
+        const width = gameSize.width```javascript
         const height = gameSize.height;
 
         if (this.cameras.main) {
@@ -215,6 +215,11 @@ class GameScene extends Phaser.Scene {
     createPlatform(x, y, scaleX = 1) {
         const platform = platforms.create(x, y, 'ground');
         platform.setScale(scaleX).refreshBody();
+        
+        // Set a timer to destroy the platform after 10 seconds
+        this.time.delayedCall(10000, () => {
+            platform.destroy();
+        });
     }
 
     createRandomPlatform() {
