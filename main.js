@@ -83,7 +83,7 @@ class LeaderboardScene extends Phaser.Scene {
         const scores = JSON.parse(localStorage.getItem('scores')) || [];
         let leaderboardText = 'Leaderboard\n';
         scores.forEach((entry, index) => {
-            leaderboardText += `{index + 1}. {entry.player}: {entry.score}\n`;
+            leaderboardText += `${index + 1}. ${entry.player}: ${entry.score}\n`;
         });
 
         this.add.text(this.scale.width / 2, this.scale.height / 2 - 100, leaderboardText, { fontSize: '32px', fill: '#000' }).setOrigin(0.5);
@@ -203,8 +203,8 @@ class GameScene extends Phaser.Scene {
     }
 
     createPlatform(x, y, scaleX = 1) {
-       ```javascript
-        const platform = platforms.create(x, y, 'ground');
+        const platform = platforms.create(x, y```javascript
+, 'ground');
         platform.setScale(scaleX).refreshBody();
 
         // Set a timer to destroy the platform after 10 seconds
@@ -328,7 +328,7 @@ class GameScene extends Phaser.Scene {
 
         let leaderboardText = 'Leaderboard\n';
         scores.forEach((entry, index) => {
-            leaderboardText += `{index + 1}. {entry.player}: {entry.score}\n`;
+            leaderboardText += `${index + 1}. ${entry.player}: ${entry.score}\n`;
         });
 
         leaderboard.setText(leaderboardText);
