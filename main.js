@@ -21,13 +21,11 @@ class MenuScene extends Phaser.Scene {
 
         const playButton = this.add.image(this.scale.width / 2, this.scale.height / 2, 'playButton').setInteractive().setDisplaySize(200, 80);
         playButton.on('pointerdown', () => {
-            console.log('Play button clicked');
             this.startGame();
         });
 
         const fullscreenButton = this.add.image(this.scale.width - 40, 40, 'fullscreen').setInteractive().setDisplaySize(32, 32);
         fullscreenButton.on('pointerdown', () => {
-            console.log('Fullscreen button clicked in menu');
             if (this.scale.isFullscreen) {
                 this.scale.stopFullscreen();
             } else {
@@ -37,7 +35,6 @@ class MenuScene extends Phaser.Scene {
 
         const leaderboardButton = this.add.image(this.scale.width / 2, this.scale.height / 2 + 100, 'leaderboardButton').setInteractive().setDisplaySize(200, 80);
         leaderboardButton.on('pointerdown', () => {
-            console.log('Leaderboard button clicked');
             this.scene.start('LeaderboardScene');
         });
 
@@ -49,24 +46,19 @@ class MenuScene extends Phaser.Scene {
         const map2 = this.add.image(this.scale.width / 2, this.scale.height / 2 - 100, 'map2').setInteractive().setDisplaySize(50, 50);
 
         character1.on('pointerdown', () => {
-            console.log('Character 1 selected');
             this.selectedCharacter = 'character1';
         });
         character2.on('pointerdown', () => {
-            console.log('Character 2 selected');
             this.selectedCharacter = 'character2';
         });
         character3.on('pointerdown', () => {
-            console.log('Character 3 selected');
             this.selectedCharacter = 'character3';
         });
 
         map1.on('pointerdown', () => {
-            console.log('Map 1 selected');
             this.selectedMap = 'map1';
         });
         map2.on('pointerdown', () => {
-            console.log('Map 2 selected');
             this.selectedMap = 'map2';
         });
     }
@@ -172,7 +164,6 @@ class GameScene extends Phaser.Scene {
 
         const fullscreenButton = this.add.image(this.scale.width - 40, 40, 'fullscreen').setInteractive().setDisplaySize(32, 32);
         fullscreenButton.on('pointerdown', () => {
-            console.log('Fullscreen button clicked');
             if (this.scale.isFullscreen) {
                 this.scale.stopFullscreen();
             } else {
@@ -182,7 +173,6 @@ class GameScene extends Phaser.Scene {
 
         const reloadButton = this.add.image(this.scale.width - 40, 80, 'reload').setInteractive().setDisplaySize(32, 32);
         reloadButton.on('pointerdown', () => {
-            console.log('Reload button clicked');
             this.scene.restart();
         });
 
@@ -201,7 +191,7 @@ class GameScene extends Phaser.Scene {
     }
 
     resize(gameSize, baseSize, displaySize, resolution) {
-        const width = gameSize.width```javascript
+        const width = gameSize.width;
         const height = gameSize.height;
 
         if (this.cameras.main) {
@@ -213,9 +203,10 @@ class GameScene extends Phaser.Scene {
     }
 
     createPlatform(x, y, scaleX = 1) {
+       ```javascript
         const platform = platforms.create(x, y, 'ground');
         platform.setScale(scaleX).refreshBody();
-        
+
         // Set a timer to destroy the platform after 10 seconds
         this.time.delayedCall(10000, () => {
             platform.destroy();
@@ -300,41 +291,32 @@ class GameScene extends Phaser.Scene {
 
         leftButton.on('pointerdown', () => {
             leftButton.isDown = true;
-            console.log('Left button pressed');
         });
         leftButton.on('pointerup', () => {
             leftButton.isDown = false;
-            console.log('Left button released');
         });
         leftButton.on('pointerout', () => {
             leftButton.isDown = false;
-            console.log('Left button out');
         });
 
         rightButton.on('pointerdown', () => {
             rightButton.isDown = true;
-            console.log('Right button pressed');
         });
         rightButton.on('pointerup', () => {
             rightButton.isDown = false;
-            console.log('Right button released');
         });
         rightButton.on('pointerout', () => {
             rightButton.isDown = false;
-            console.log('Right button out');
         });
 
         jumpButton.on('pointerdown', () => {
             jumpButton.isDown = true;
-            console.log('Jump button pressed');
         });
         jumpButton.on('pointerup', () => {
             jumpButton.isDown = false;
-            console.log('Jump button released');
         });
         jumpButton.on('pointerout', () => {
             jumpButton.isDown = false;
-            console.log('Jump button out');
         });
     }
 
