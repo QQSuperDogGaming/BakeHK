@@ -111,6 +111,7 @@ let gameOver = false;
 let score = 0;
 let lives = 3;
 let leaderboard;
+let canJump = true; // Cooldown flag
 
 class GameScene extends Phaser.Scene {
     constructor() {
@@ -187,10 +188,8 @@ class GameScene extends Phaser.Scene {
 
         this.createMobileControls();
 
-        // Resize game when window is resized
         this.scale.on('resize', this.resize, this);
 
-        // Leaderboard
         leaderboard = this.add.text(this.scale.width - 200, 16, 'Leaderboard', { fontSize: '32px', fill: '#000' });
         this.updateLeaderboard();
     }
@@ -202,7 +201,7 @@ class GameScene extends Phaser.Scene {
     }
 
     resize(gameSize, baseSize, displaySize, resolution) {
-        const width = gameSize.width;
+        const width =gameSize.width;
         const height = gameSize.height;
 
         if (this.cameras.main) {
@@ -266,8 +265,12 @@ class GameScene extends Phaser.Scene {
         } else if (cursors.right.isDown || wasd.right.isDown || rightButton.isDown) {
             player.setVelocityX(160);
         }
-        if ((cursors.up.isDown || wasd.up.isDown || jumpButton.isDown) && player.body.touching.down) {
+        if ((cursors.up.isDown || wasd.up.isDown || jumpButton.isDown) && canJump) {
             player.setVelocityY(-330);
+            canJump = false;
+            this.time.delayedCall(200, () => {
+                canJump = true;
+            });
         }
     }
 
@@ -282,9 +285,9 @@ class GameScene extends Phaser.Scene {
     }
 
     createMobileControls() {
-        leftButton = this.add.image(100, this.scale.height - 100, 'leftButton').setInteractive().setDisplaySize(120, 120); // Increased size
-        rightButton = this.add.image(250, this.scale.height - 100, 'rightButton').setInteractive().setDisplaySize(120, 120); // Increased size
-        jumpButton = this.add.image(this.scale.width - 150, this.scale.height - 100, 'jumpButton').setInteractive().setDisplaySize(120, 120); // Increased size
+        leftButton = this.add.image(100, this.scale.height - 100, 'leftButton').setInteractive().setDisplaySize(120, 120);
+        rightButton = this.add.image(250, this.scale.height - 100, 'rightButton').setInteractive().setDisplaySize(120, 120);
+        jumpButton = this.add.image(this.scale.width - 150, this.scale.height - 100, 'jumpButton').setInteractive().setDisplaySize(120, 120);
 
         leftButton.setScrollFactor(0);
         rightButton.setScrollFactor(0);
@@ -334,7 +337,7 @@ class GameScene extends Phaser.Scene {
         const scores = JSON.parse(localStorage.getItem('scores')) || [];
         scores.push({ player: 'Player', score: score });
         scores.sort((a, b) => b.score - a.score);
-        localStorage.setItem('scores', JSON.stringify(scores.slice(0, 5))); // Keep top 5 scores
+        localStorage.setItem('scores', JSON.stringify(scores.slice(0, 5)));
 
         let leaderboardText = 'Leaderboard\n';
         scores.forEach((entry, index) => {
@@ -349,7 +352,7 @@ function collectStar(player, star) {
     star.disableBody(true, true);
     score += 10;
     scoreText.setText(`Score: ${score}`);
-    this.scene.get('GameScene').updateLeaderboard();  // Update leaderboard after collecting a star
+    this.scene.get('GameScene').updateLeaderboard();
 }
 
 function hitBomb(player, bomb) {
@@ -360,13 +363,11 @@ function hitBomb(player, bomb) {
 
     if (lives <= 0) {
         gameOver = true;
-        // Update leaderboard and save score
         const scores = JSON.parse(localStorage.getItem('scores')) || [];
         scores.push({ player: 'Player', score: score });
         scores.sort((a, b) => b.score - a.score);
-        localStorage.setItem('scores', JSON.stringify(scores.slice(0, 5))); // Keep top 5 scores
+        localStorage.setItem('scores', JSON.stringify(scores.slice(0, 5)));
 
-        // After a short delay, restart the game
         this.time.delayedCall(1000, () => {
             gameOver = false;
             score = 0;
@@ -374,9 +375,7 @@ function hitBomb(player, bomb) {
             this.scene.restart();
         });
     } else {
-        // Remove bomb
         bomb.disableBody(true, true);
-        // Allow player to continue
         this.time.delayedCall(1000, () => {
             player.clearTint();
             this.physics.resume();
