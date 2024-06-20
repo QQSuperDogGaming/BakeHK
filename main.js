@@ -198,12 +198,12 @@ class GameScene extends Phaser.Scene {
 
     resize(gameSize, baseSize, displaySize, resolution) {
         const width = gameSize.width;
-        const height = gameSize.height;
+        const height = gameSize```javascript
+height;
 
         if (this.cameras.main) {
             this.cameras.resize(width, height);
-            scoreText.setPosition```javascript
-(16, 16);
+            scoreText.setPosition(16, 16);
             livesText.setPosition(16, 80);
             leaderboard.setPosition(width - 200, 16);
         }
