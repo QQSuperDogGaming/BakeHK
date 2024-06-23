@@ -20,17 +20,23 @@ window.addEventListener('load', () => {
         }
 
         create() {
-            this.add.image(this.scale.width / 2, this.scale.height / 2, 'menuBackground').setDisplaySize(this.scale.width, this.scale.height);
+            this.menuBackground = this.add.image(this.scale.width / 2, this.scale.height / 2, 'menuBackground').setDisplaySize(this.scale.width, this.scale.height);
+            this.title = this.add.image(this.scale.width / 2, this.scale.height / 2 - 250, 'title').setDisplaySize(400, 100);
+            this.playButton = this.add.image(this.scale.width / 2, this.scale.height / 2, 'playButton').setInteractive().setDisplaySize(200, 80);
+            this.fullscreenButton = this.add.image(this.scale.width - 40, 40, 'fullscreen').setInteractive().setDisplaySize(32, 32);
+            this.leaderboardButton = this.add.image(this.scale.width / 2, this.scale.height / 2 + 100, 'leaderboardButton').setInteractive().setDisplaySize(200, 80);
 
-            const title = this.add.image(this.scale.width / 2, this.scale.height / 2 - 250, 'title').setDisplaySize(400, 100);
+            this.character1 = this.add.image(this.scale.width / 2 - 100, this.scale.height / 2 - 200, 'character1').setInteractive().setDisplaySize(50, 50);
+            this.character2 = this.add.image(this.scale.width / 2, this.scale.height / 2 - 200, 'character2').setInteractive().setDisplaySize(50, 50);
+            this.character3 = this.add.image(this.scale.width / 2 + 100, this.scale.height / 2 - 200, 'character3').setInteractive().setDisplaySize(50, 50);
+            this.map1 = this.add.image(this.scale.width / 2 - 100, this.scale.height / 2 - 100, 'map1').setInteractive().setDisplaySize(50, 50);
+            this.map2 = this.add.image(this.scale.width / 2, this.scale.height / 2 - 100, 'map2').setInteractive().setDisplaySize(50, 50);
 
-            const playButton = this.add.image(this.scale.width / 2, this.scale.height / 2, 'playButton').setInteractive().setDisplaySize(200, 80);
-            playButton.on('pointerdown', () => {
+            this.playButton.on('pointerdown', () => {
                 document.getElementById('username-container').style.display = 'block';
             });
 
-            const fullscreenButton = this.add.image(this.scale.width - 40, 40, 'fullscreen').setInteractive().setDisplaySize(32, 32);
-            fullscreenButton.on('pointerdown', () => {
+            this.fullscreenButton.on('pointerdown', () => {
                 if (this.scale.isFullscreen) {
                     this.scale.stopFullscreen();
                 } else {
@@ -38,32 +44,24 @@ window.addEventListener('load', () => {
                 }
             });
 
-            const leaderboardButton = this.add.image(this.scale.width / 2, this.scale.height / 2 + 100, 'leaderboardButton').setInteractive().setDisplaySize(200, 80);
-            leaderboardButton.on('pointerdown', () => {
+            this.leaderboardButton.on('pointerdown', () => {
                 this.scene.start('LeaderboardScene');
             });
 
-            const character1 = this.add.image(this.scale.width / 2 - 100, this.scale.height / 2 - 200, 'character1').setInteractive().setDisplaySize(50, 50);
-            const character2 = this.add.image(this.scale.width / 2, this.scale.height / 2 - 200, 'character2').setInteractive().setDisplaySize(50, 50);
-            const character3 = this.add.image(this.scale.width / 2 + 100, this.scale.height / 2 - 200, 'character3').setInteractive().setDisplaySize(50, 50);
-
-            const map1 = this.add.image(this.scale.width / 2 - 100, this.scale.height / 2 - 100, 'map1').setInteractive().setDisplaySize(50, 50);
-            const map2 = this.add.image(this.scale.width / 2, this.scale.height / 2 - 100, 'map2').setInteractive().setDisplaySize(50, 50);
-
-            character1.on('pointerdown', () => {
+            this.character1.on('pointerdown', () => {
                 this.selectedCharacter = 'character1';
             });
-            character2.on('pointerdown', () => {
+            this.character2.on('pointerdown', () => {
                 this.selectedCharacter = 'character2';
             });
-            character3.on('pointerdown', () => {
+            this.character3.on('pointerdown', () => {
                 this.selectedCharacter = 'character3';
             });
 
-            map1.on('pointerdown', () => {
+            this.map1.on('pointerdown', () => {
                 this.selectedMap = 'map1';
             });
-            map2.on('pointerdown', () => {
+            this.map2.on('pointerdown', () => {
                 this.selectedMap = 'map2';
             });
 
@@ -77,12 +75,29 @@ window.addEventListener('load', () => {
                     alert('Please enter your username.');
                 }
             });
+
+            this.scale.on('resize', this.resize, this);
+            this.resize(); // Call resize initially to set up the scene correctly
         }
 
         startGame() {
             const selectedCharacter = this.selectedCharacter || 'character1';
             const selectedMap = this.selectedMap || 'map1';
             this.scene.start('GameScene', { character: selectedCharacter, map: selectedMap });
+        }
+
+        resize() {
+            this.menuBackground.setDisplaySize(this.scale.width, this.scale.height);
+            this.title.setPosition(this.scale.width / 2, this.scale.height / 2 - 250);
+            this.playButton.setPosition(this.scale.width / 2, this.scale.height / 2);
+            this.fullscreenButton.setPosition(this.scale.width - 40, 40);
+            this.leaderboardButton.setPosition(this.scale.width / 2, this.scale.height / 2 + 100);
+
+            this.character1.setPosition(this.scale.width / 2 - 100, this.scale.height / 2 - 200);
+            this.character2.setPosition(this.scale.width / 2, this.scale.height / 2 - 200);
+            this.character3.setPosition(this.scale.width / 2 + 100, this.scale.height / 2 - 200);
+            this.map1.setPosition(this.scale.width / 2 - 100, this.scale.height / 2 - 100);
+            this.map2.setPosition(this.scale.width / 2, this.scale.height / 2 - 100);
         }
     }
 
@@ -96,20 +111,28 @@ window.addEventListener('load', () => {
         }
 
         create() {
-            this.add.image(this.scale.width / 2, this.scale.height / 2, 'leaderboardBackground').setDisplaySize(this.scale.width, this.scale.height);
-
+            this.leaderboardBackground = this.add.image(this.scale.width / 2, this.scale.height / 2, 'leaderboardBackground').setDisplaySize(this.scale.width, this.scale.height);
             const scores = JSON.parse(localStorage.getItem('scores')) || [];
             let leaderboardText = 'Leaderboard\n';
             scores.forEach((entry, index) => {
                 leaderboardText += `${index + 1}. ${entry.player}: ${entry.score}\n`;
             });
 
-            this.add.text(this.scale.width / 2, this.scale.height / 2 - 100, leaderboardText, { fontSize: '32px', fill: '#000' }).setOrigin(0.5);
+            this.leaderboardText = this.add.text(this.scale.width / 2, this.scale.height / 2 - 100, leaderboardText, { fontSize: '32px', fill: '#000' }).setOrigin(0.5);
+            this.backButton = this.add.image(this.scale.width / 2, this.scale.height / 2 + 100, 'backButton').setInteractive().setDisplaySize(200, 80);
 
-            const backButton = this.add.image(this.scale.width / 2, this.scale.height / 2 + 100, 'backButton').setInteractive().setDisplaySize(200, 80);
-            backButton.on('pointerdown', () => {
+            this.backButton.on('pointerdown', () => {
                 this.scene.start('MenuScene');
             });
+
+            this.scale.on('resize', this.resize, this);
+            this.resize(); // Call resize initially to set up the scene correctly
+        }
+
+        resize() {
+            this.leaderboardBackground.setDisplaySize(this.scale.width, this.scale.height);
+            this.leaderboardText.setPosition(this.scale.width / 2, this.scale.height / 2 - 100);
+            this.backButton.setPosition(this.scale.width / 2, this.scale.height / 2 + 100);
         }
     }
 
@@ -145,7 +168,7 @@ window.addEventListener('load', () => {
         }
 
         create(data) {
-            this.add.image(this.scale.width / 2, this.scale.height / 2, data.map).setDisplaySize(this.scale.width, this.scale.height);
+            this.background = this.add.image(this.scale.width / 2, this.scale.height / 2, data.map).setDisplaySize(this.scale.width, this.scale.height);
 
             platforms = this.physics.add.staticGroup();
 
@@ -202,9 +225,7 @@ window.addEventListener('load', () => {
             this.createMobileControls();
 
             this.scale.on('resize', this.resize, this);
-
-            // Automatically resize the screen after the game starts
-            this.scale.resize(window.innerWidth, window.innerHeight);
+            this.resize(); // Call resize initially to set up the scene correctly
         }
 
         update() {
@@ -213,20 +234,16 @@ window.addEventListener('load', () => {
             this.handlePlayerMovement(player, cursors, wasd, leftButton, rightButton, jumpButton);
         }
 
-        resize(gameSize, baseSize, displaySize, resolution) {
-            const width = gameSize.width;
-            const height = gameSize.height;
+        resize() {
+            this.background.setDisplaySize(this.scale.width, this.scale.height);
 
-            if (this.cameras.main) {
-                this.cameras.resize(width, height);
-                scoreText.setPosition(16, 16);
-                livesText.setPosition(16, 80);
+            scoreText.setPosition(16, 16);
+            livesText.setPosition(16, 80);
 
-                // Adjust the positions of the mobile controls based on the new screen size
-                leftButton.setPosition(100, height - 100);
-                rightButton.setPosition(250, height - 100);
-                jumpButton.setPosition(width - 150, height - 100);
-            }
+            // Adjust the positions of the mobile controls based on the new screen size
+            leftButton.setPosition(100, this.scale.height - 100);
+            rightButton.setPosition(250, this.scale.height - 100);
+            jumpButton.setPosition(this.scale.width - 150, this.scale.height - 100);
         }
 
         createPlatform(x, y, scaleX = 1) {
