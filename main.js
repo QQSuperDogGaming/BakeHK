@@ -9,9 +9,9 @@ class MenuScene extends Phaser.Scene {
         this.load.image('leaderboardButton', 'assets/leaderboardButton.png');
         this.load.image('backButton', 'assets/backButton.png');
         this.load.image('menuBackground', 'assets/menuBackground.png');
-        this.load.image('character1Button', 'assets/character1Button.png');
-        this.load.image('character2Button', 'assets/character2Button.png');
-        this.load.image('character3Button', 'assets/character3Button.png');
+        this.load.image('character1', 'assets/character1.png');
+        this.load.image('character2', 'assets/character2.png');
+        this.load.image('character3', 'assets/character3.png');
         this.load.image('map1', 'assets/map1.png');
         this.load.image('map2', 'assets/map2.png');
         this.load.image('leaderboardBackground', 'assets/leaderboardBackground.png'); // Preload leaderboard background
@@ -39,9 +39,9 @@ class MenuScene extends Phaser.Scene {
             this.scene.start('LeaderboardScene');
         });
 
-        const character1 = this.add.image(this.scale.width / 2 - 100, this.scale.height / 2 - 200, 'character1Button').setInteractive().setDisplaySize(50, 50);
-        const character2 = this.add.image(this.scale.width / 2, this.scale.height / 2 - 200, 'character2Button').setInteractive().setDisplaySize(50, 50);
-        const character3 = this.add.image(this.scale.width / 2 + 100, this.scale.height / 2 - 200, 'character3Button').setInteractive().setDisplaySize(50, 50);
+        const character1 = this.add.image(this.scale.width / 2 - 100, this.scale.height / 2 - 200, 'character1').setInteractive().setDisplaySize(50, 50);
+        const character2 = this.add.image(this.scale.width / 2, this.scale.height / 2 - 200, 'character2').setInteractive().setDisplaySize(50, 50);
+        const character3 = this.add.image(this.scale.width / 2 + 100, this.scale.height / 2 - 200, 'character3').setInteractive().setDisplaySize(50, 50);
 
         const map1 = this.add.image(this.scale.width / 2 - 100, this.scale.height / 2 - 100, 'map1').setInteractive().setDisplaySize(50, 50);
         const map2 = this.add.image(this.scale.width / 2, this.scale.height / 2 - 100, 'map2').setInteractive().setDisplaySize(50, 50);
@@ -116,7 +116,6 @@ let scoreText, livesText;
 let gameOver = false;
 let score = 0;
 let lives = 3;
-let leaderboard;
 let canJump = true; // Cooldown flag
 
 class GameScene extends Phaser.Scene {
@@ -167,8 +166,7 @@ class GameScene extends Phaser.Scene {
         this.physics.add.collider(player, bombs, hitBomb, null, this);
 
         scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
-        livesText = this.add.text(
-16, 80, `Lives: ${lives}`, { fontSize: '32px', fill: '#000' });
+        livesText = this.add.text(16, 80, `Lives: ${lives}`, { fontSize: '32px', fill: '#000' });
 
         this.createStar();
         this.time.addEvent({ delay: 1000, callback: () => this.createStar(), callbackScope: this, loop: true });
@@ -200,9 +198,6 @@ class GameScene extends Phaser.Scene {
         this.createMobileControls();
 
         this.scale.on('resize', this.resize, this);
-
-        leaderboard = this.add.text(this.scale.width - 200, 16, 'Leaderboard', { fontSize: '32px', fill: '#000' });
-        this.updateLeaderboard();
     }
 
     update() {
@@ -219,7 +214,6 @@ class GameScene extends Phaser.Scene {
             this.cameras.resize(width, height);
             scoreText.setPosition(16, 16);
             livesText.setPosition(16, 80);
-            leaderboard.setPosition(width - 200, 16);
         }
     }
 
@@ -338,20 +332,6 @@ class GameScene extends Phaser.Scene {
         jumpButton.on('pointerout', () => {
             jumpButton.isDown = false;
         });
-    }
-
-    updateLeaderboard() {
-        const scores = JSON.parse(localStorage.getItem('scores')) || [];
-        scores.push({ player: localStorage.getItem('username') || 'Player', score: score });
-        scores.sort((a, b) => b.score - a.score);
-        localStorage.setItem('scores', JSON.stringify(scores.slice(0, 5)));
-
-        let leaderboardText = 'Leaderboard\n';
-        scores.forEach((entry, index) => {
-            leaderboardText += `${index + 1}. ${entry.player}: ${entry.score}\n`;
-        });
-
-        leaderboard.setText(leaderboardText);
     }
 }
 
