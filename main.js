@@ -159,11 +159,11 @@ class GameScene extends Phaser.Scene {
 
         stars = this.physics.add.group();
         this.physics.add.collider(stars, platforms);
-        this.physics.add.overlap(player, stars, collectStar, null, this);
+        this.physics.add.overlap(player, stars, this.collectStar, null, this);
 
         bombs = this.physics.add.group();
         this.physics.add.collider(bombs, platforms);
-        this.physics.add.collider(player, bombs, hitBomb, null, this);
+        this.physics.add.collider(player, bombs, this.hitBomb, null, this);
 
         scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
         livesText = this.add.text(16, 80, `Lives: ${lives}`, { fontSize: '32px', fill: '#000' });
@@ -333,54 +333,57 @@ class GameScene extends Phaser.Scene {
             jumpButton.isDown = false;
         });
     }
-}
 
-function collectStar(player, star) {
-    star.disableBody(true, true);
-    score += 10;
-    scoreText.setText(`Score: ${score}`);
-    this.scene.get('GameScene').updateLeaderboard();
-}
-
-function hitBomb(player, bomb) {
-    player.setTint(0xff0000);
-    this.physics.pause();
-    lives -= 1;
-    livesText.setText(`Lives: ${lives}`);
-
-    if (lives <= 0) {
-        gameOver = true;
+    updateLeaderboard() {
         const scores = JSON.parse(localStorage.getItem('scores')) || [];
         scores.push({ player: localStorage.getItem('username') || 'Player', score: score });
         scores.sort((a, b) => b.score - a.score);
         localStorage.setItem('scores', JSON.stringify(scores.slice(0, 5)));
+    }
 
-        this.time.delayedCall(1000, () => {
-            this.showGameOverMenu();
+    showGameOverMenu() {
+        const gameOverText = this.add.text(this.scale.width / 2, this.scale.height / 2 - 100, 'Game Over', { fontSize: '64px', fill: '#ff0000' }).setOrigin(0.5);
+        const continueButton = this.add.text(this.scale.width / 2, this.scale.height / 2, 'Continue', { fontSize: '32px', fill: '#00ff00' }).setOrigin(0.5).setInteractive();
+        const menuButton = this.add.text(this.scale.width / 2, this.scale.height / 2 + 100, 'Back to Menu', { fontSize: '32px', fill: '#0000ff' }).setOrigin(0.5).setInteractive();
+
+        continueButton.on('pointerdown', () => {
+            score = 0;
+            lives = 3;
+            this.scene.restart();
         });
-    } else {
-        bomb.disableBody(true, true);
-        this.time.delayedCall(1000, () => {
-            player.clearTint();
-            this.physics.resume();
+
+        menuButton.on('pointerdown', () => {
+            this.scene.start('MenuScene');
         });
     }
-}
 
-showGameOverMenu() {
-    const gameOverText = this.add.text(this.scale.width / 2, this.scale.height / 2 - 100, 'Game Over', { fontSize: '64px', fill: '#ff0000' }).setOrigin(0.5);
-    const continueButton = this.add.text(this.scale.width / 2, this.scale.height / 2, 'Continue', { fontSize: '32px', fill: '#00ff00' }).setOrigin(0.5).setInteractive();
-    const menuButton = this.add.text(this.scale.width / 2, this.scale.height / 2 + 100, 'Back to Menu', { fontSize: '32px', fill: '#0000ff' }).setOrigin(0.5).setInteractive();
+    collectStar(player, star) {
+        star.disableBody(true, true);
+        score += 10;
+        scoreText.setText(`Score: ${score}`);
+        this.updateLeaderboard();
+    }
 
-    continueButton.on('pointerdown', () => {
-        score = 0;
-        lives = 3;
-        this.scene.restart();
-    });
+    hitBomb(player, bomb) {
+        player.setTint(0xff0000);
+        this.physics.pause();
+        lives -= 1;
+        livesText.setText(`Lives: ${lives}`);
 
-    menuButton.on('pointerdown', () => {
-        this.scene.start('MenuScene');
-    });
+        if (lives <= 0) {
+            gameOver = true;
+            this.updateLeaderboard();
+            this.time.delayedCall(1000, () => {
+                this.showGameOverMenu();
+            });
+        } else {
+            bomb.disableBody(true, true);
+            this.time.delayedCall(1000, () => {
+                player.clearTint();
+                this.physics.resume();
+            });
+        }
+    }
 }
 
 const config = {
