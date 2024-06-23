@@ -9,9 +9,9 @@ class MenuScene extends Phaser.Scene {
         this.load.image('leaderboardButton', 'assets/leaderboardButton.png');
         this.load.image('backButton', 'assets/backButton.png');
         this.load.image('menuBackground', 'assets/menuBackground.png');
-        this.load.image('character1Button', 'assets/character1Button.png');
-        this.load.image('character2Button', 'assets/character2Button.png');
-        this.load.image('character3Button', 'assets/character3Button.png');
+        this.load.image('character1', 'assets/character1.png');
+        this.load.image('character2', 'assets/character2.png');
+        this.load.image('character3', 'assets/character3.png');
         this.load.image('map1', 'assets/map1.png');
         this.load.image('map2', 'assets/map2.png');
         this.load.image('leaderboardBackground', 'assets/leaderboardBackground.png'); // Preload leaderboard background
@@ -39,9 +39,9 @@ class MenuScene extends Phaser.Scene {
             this.scene.start('LeaderboardScene');
         });
 
-        const character1 = this.add.image(this.scale.width / 2 - 100, this.scale.height / 2 - 200, 'character1Button').setInteractive().setDisplaySize(50, 50);
-        const character2 = this.add.image(this.scale.width / 2, this.scale.height / 2 - 200, 'character2Button').setInteractive().setDisplaySize(50, 50);
-        const character3 = this.add.image(this.scale.width / 2 + 100, this.scale.height / 2 - 200, 'character3Button').setInteractive().setDisplaySize(50, 50);
+        const character1 = this.add.image(this.scale.width / 2 - 100, this.scale.height / 2 - 200, 'character1').setInteractive().setDisplaySize(50, 50);
+        const character2 = this.add.image(this.scale.width / 2, this.scale.height / 2 - 200, 'character2').setInteractive().setDisplaySize(50, 50);
+        const character3 = this.add.image(this.scale.width / 2 + 100, this.scale.height / 2 - 200, 'character3').setInteractive().setDisplaySize(50, 50);
 
         const map1 = this.add.image(this.scale.width / 2 - 100, this.scale.height / 2 - 100, 'map1').setInteractive().setDisplaySize(50, 50);
         const map2 = this.add.image(this.scale.width / 2, this.scale.height / 2 - 100, 'map2').setInteractive().setDisplaySize(50, 50);
@@ -100,7 +100,7 @@ class LeaderboardScene extends Phaser.Scene {
             leaderboardText += `${index + 1}. ${entry.player}: ${entry.score}\n`;
         });
 
-        this.add.text(this.scale.width / 2, this.scale.height / 2 - 100, leaderboardText, { fontSize: '32px', fill: '#FFFFFF' }).setOrigin(0.5);
+        this.add.text(this.scale.width / 2, this.scale.height / 2 - 100, leaderboardText, { fontSize: '32px', fill: '#000' }).setOrigin(0.5);
 
         const backButton = this.add.image(this.scale.width / 2, this.scale.height / 2 + 100, 'backButton').setInteractive().setDisplaySize(200, 80);
         backButton.on('pointerdown', () => {
@@ -198,6 +198,9 @@ class GameScene extends Phaser.Scene {
         this.createMobileControls();
 
         this.scale.on('resize', this.resize, this);
+
+        // Automatically resize the screen after the game starts
+        this.scale.resize(window.innerWidth, window.innerHeight);
     }
 
     update() {
