@@ -2,30 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Phaser Game</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.55.2/phaser.min.js"></script>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-        }
-        #username-container {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            display: none;
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Game</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="phaser.min.js"></script>
+    <script src="main.js" defer></script>
 </head>
 <body>
-    <div id="username-container">
-        <input type="text" id="username" placeholder="Enter your username" autocomplete="off">
+    <div id="username-container" style="display:none;">
+        <input type="text" id="username" placeholder="Enter your name" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false">
         <button id="start-game">Start Game</button>
     </div>
-    <script src="main.js"></script>
 </body>
 </html>
-
