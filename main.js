@@ -101,7 +101,7 @@ window.addEventListener('load', () => {
                 leaderboardText += `${index + 1}. ${entry.player}: ${entry.score}\n`;
             });
 
-            this.add.text(this.scale.width / 2, this.scale.height / 2 - 100, leaderboardText, { fontSize: '32px', fill: '#000' }).setOrigin(0.5);
+            this.add.text(this.scale.width / 2, this.scale.height / 2 - 100, leaderboardText, { fontSize: '32px', fill: '#fff' }).setOrigin(0.5);
 
             const backButton = this.add.image(this.scale.width / 2, this.scale.height / 2 + 100, 'backButton').setInteractive().setDisplaySize(200, 80);
             backButton.on('pointerdown', () => {
