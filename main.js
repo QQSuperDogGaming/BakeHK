@@ -336,7 +336,17 @@ class GameScene extends Phaser.Scene {
 
     updateLeaderboard() {
         const scores = JSON.parse(localStorage.getItem('scores')) || [];
-        scores.push({ player: localStorage.getItem('username') || 'Player', score: score });
+        const username = localStorage.getItem('username') || 'Player';
+        const existingScoreIndex = scores.findIndex(entry => entry.player === username);
+
+        if (existingScoreIndex !== -1) {
+            if (scores[existingScoreIndex].score < score) {
+                scores[existingScoreIndex].score = score;
+            }
+        } else {
+            scores.push({ player: username, score: score });
+        }
+
         scores.sort((a, b) => b.score - a.score);
         localStorage.setItem('scores', JSON.stringify(scores.slice(0, 5)));
     }
@@ -361,7 +371,6 @@ class GameScene extends Phaser.Scene {
         star.disableBody(true, true);
         score += 10;
         scoreText.setText(`Score: ${score}`);
-        this.updateLeaderboard();
     }
 
     hitBomb(player, bomb) {
