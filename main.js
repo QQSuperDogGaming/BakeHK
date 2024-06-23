@@ -356,10 +356,7 @@ function hitBomb(player, bomb) {
         localStorage.setItem('scores', JSON.stringify(scores.slice(0, 5)));
 
         this.time.delayedCall(1000, () => {
-            gameOver = false;
-            score = 0;
-            lives = 3;
-            this.scene.restart();
+            this.showGameOverMenu();
         });
     } else {
         bomb.disableBody(true, true);
@@ -368,6 +365,22 @@ function hitBomb(player, bomb) {
             this.physics.resume();
         });
     }
+}
+
+showGameOverMenu() {
+    const gameOverText = this.add.text(this.scale.width / 2, this.scale.height / 2 - 100, 'Game Over', { fontSize: '64px', fill: '#ff0000' }).setOrigin(0.5);
+    const continueButton = this.add.text(this.scale.width / 2, this.scale.height / 2, 'Continue', { fontSize: '32px', fill: '#00ff00' }).setOrigin(0.5).setInteractive();
+    const menuButton = this.add.text(this.scale.width / 2, this.scale.height / 2 + 100, 'Back to Menu', { fontSize: '32px', fill: '#0000ff' }).setOrigin(0.5).setInteractive();
+
+    continueButton.on('pointerdown', () => {
+        score = 0;
+        lives = 3;
+        this.scene.restart();
+    });
+
+    menuButton.on('pointerdown', () => {
+        this.scene.start('MenuScene');
+    });
 }
 
 const config = {
