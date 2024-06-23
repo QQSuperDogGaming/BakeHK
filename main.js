@@ -217,6 +217,11 @@ class GameScene extends Phaser.Scene {
             this.cameras.resize(width, height);
             scoreText.setPosition(16, 16);
             livesText.setPosition(16, 80);
+
+            // Adjust the positions of the mobile controls based on the new screen size
+            leftButton.setPosition(100, height - 100);
+            rightButton.setPosition(250, height - 100);
+            jumpButton.setPosition(width - 150, height - 100);
         }
     }
 
@@ -298,9 +303,9 @@ class GameScene extends Phaser.Scene {
     }
 
     createMobileControls() {
-        leftButton = this.add.image(100, this.scale.height - 300, 'leftButton').setInteractive().setDisplaySize(120, 120);
-        rightButton = this.add.image(250, this.scale.height - 300, 'rightButton').setInteractive().setDisplaySize(120, 120);
-        jumpButton = this.add.image(this.scale.width - 150, this.scale.height - 300, 'jumpButton').setInteractive().setDisplaySize(120, 120);
+        leftButton = this.add.image(100, this.scale.height - 100, 'leftButton').setInteractive().setDisplaySize(120, 120);
+        rightButton = this.add.image(250, this.scale.height - 100, 'rightButton').setInteractive().setDisplaySize(120, 120);
+        jumpButton = this.add.image(this.scale.width - 150, this.scale.height - 100, 'jumpButton').setInteractive().setDisplaySize(120, 120);
 
         leftButton.setScrollFactor(0);
         rightButton.setScrollFactor(0);
