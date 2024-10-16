@@ -16,6 +16,8 @@ window.addEventListener('load', () => {
             this.load.image('map1', 'assets/map1.png');
             this.load.image('map2', 'assets/map2.png');
             this.load.image('leaderboardBackground', 'assets/leaderboardBackground.png'); // Preload leaderboard background
+            this.load.audio('menuMusic', 'assets/menuMusic.mp3'); // Load your music
+            this.load.audio('gameMusic', 'assets/gameMusic.mp3'); // Load game music
             this.load.image('title', 'assets/title.png'); // Preload title image
         }
 
