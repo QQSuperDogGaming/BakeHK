@@ -398,8 +398,8 @@ window.addEventListener('resize', () => {
 
 create(data) {
     // Background music for the game
-    this.gameMusic = this.sound.add('gameMusic', { loop: true, volume: 0.5 });
-    this.gameMusic.play(); // Start playing the game music
+    this.menuMusic = this.sound.add('menuMusic', { loop: true, volume: 0.5 });
+    this.menuMusic.play(); // Start playing the game music
 
     // Rest of your create logic
 
