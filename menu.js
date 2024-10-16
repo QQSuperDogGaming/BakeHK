@@ -393,3 +393,17 @@ const game = new Phaser.Game(config);
 window.addEventListener('resize', () => {
     game.scale.resize(window.innerWidth, window.innerHeight);
 });
+
+create(data) {
+    // Background music for the game
+    this.gameMusic = this.sound.add('gameMusic', { loop: true, volume: 0.5 });
+    this.gameMusic.play(); // Start playing the game music
+
+    // Rest of your create logic
+
+    const backButton = this.add.image(this.scale.width - 40, 120, 'backButton').setInteractive().setDisplaySize(32, 32);
+    backButton.on('pointerdown', () => {
+        this.gameMusic.stop(); // Stop game music when returning to the menu
+        this.scene.start('MenuScene');
+    });
+}
