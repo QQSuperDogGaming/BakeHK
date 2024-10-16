@@ -14,6 +14,8 @@ class MenuScene extends Phaser.Scene {
         this.load.image('character3', 'assets/character3.png');
         this.load.image('map1', 'assets/map1.png');
         this.load.image('map2', 'assets/map2.png');
+        this.load.audio('menuMusic', 'assets/menuMusic.mp3'); // Load your music
+        this.load.audio('gameMusic', 'assets/gameMusic.mp3'); // Load game music
     }
 
     create() {
