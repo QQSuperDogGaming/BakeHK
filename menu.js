@@ -409,3 +409,30 @@ create(data) {
         this.scene.start('MenuScene');
     });
 }
+create() {
+    this.menuMusic = this.sound.add('menuMusic', { loop: true, volume: 0.5 });
+
+    // Other UI elements
+    this.playButton = this.add.image(this.scale.width / 2, this.scale.height / 2, 'playButton').setInteractive().setDisplaySize(200, 80);
+
+    this.playButton.on('pointerdown', () => {
+        // Check if the music context is suspended and resume it
+        if (this.sound.context.state === 'suspended') {
+            this.sound.context.resume();
+        }
+
+        // Start playing the menu music only after user clicks the play button
+        this.menuMusic.play();
+
+        document.getElementById('username-container').style.display = 'block';
+    });
+
+    this.fullscreenButton = this.add.image(this.scale.width - 40, 40, 'fullscreen').setInteractive().setDisplaySize(32, 32);
+    this.fullscreenButton.on('pointerdown', () => {
+        if (this.scale.isFullscreen) {
+            this.scale.stopFullscreen();
+        } else {
+            this.scale.startFullscreen();
+        }
+    });
+}
