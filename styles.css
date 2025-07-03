@@ -1,3 +1,64 @@
-input[type="text"] {
-    font-size: 16px; /* Ensure the font size is 16px or larger */
+body {
+font-family: 'Arial', sans-serif;
+background: #fffbe9;
+color: #333;
+text-align: center;
+padding: 40px;
+}
+
+h1, h2 {
+color: #b65c38;
+}
+
+button {
+font-size: 1.2em;
+padding: 10px 20px;
+margin: 10px;
+border: none;
+background: #f9c46b;
+border-radius: 8px;
+cursor: pointer;
+}
+
+button:hover {
+background: #f6a33d;
+}
+
+#bakeBtn {
+font-size: 80px;
+cursor: pointer;
+margin: 20px;
+}
+
+.screen {
+display: none;
+}
+
+.screen.active {
+display: block;
+}
+
+const items = [
+{ name: "Pineapple Bun", emoji: "🍍" },
+{ name: "Mooncake", emoji: "🥮" },
+{ name: "Belly Button Cookie", emoji: "🍪" }
+];
+
+let round = 0;
+let playerWins = 0;
+let aiWins = 0;
+
+let playerScore = 0;
+let aiScore = 0;
+let timeLeft = 10;
+let timer;
+
+function showScreen(id) {
+document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+document.getElementById(id).classList.add('active');
+}
+
+function startRound() {
+if (round >= items.length) {
+return showFinalResult();
 }
